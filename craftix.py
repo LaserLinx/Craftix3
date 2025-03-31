@@ -44,7 +44,6 @@ outline_collor = colorschem.outline_collor
 dark_bg_color = colorschem.dark_bg_color
 light_bg_color = colorschem.light_bg_color
 
-
 settings_screen = None
 element_database = []
 running = True
@@ -157,7 +156,6 @@ files = os.listdir("./")
 if not db_engine.database_path.replace("./","") in files:
 	easydialog.msgbox("Database is not connected\nplease connect database")
 	root_stop()
-
 
 
 aditional_types = []
@@ -2742,7 +2740,11 @@ root_window.bind_all("<Control-r>",lambda event:update_database())
 root_menu.add_cascade(label="File",foreground=text_color,menu=root_menu_file)
 #root_menu.add_cascade(label="Quick Tools",foreground=text_color,menu=root_menu_quick_tools)
 
+#system plugins
 
+
+
+#plugins
 PLUGINS_DIR = "plugins"
 
 def load_plugins():
@@ -2770,13 +2772,14 @@ if plugins_command > 0:
 generators={}
 plugins_updates = []
 for plugin in plugins:
+	if hasattr(plugin,"run"):
+		plugin.run()
 	if hasattr(plugin,"Tab"):
 		pl_fr = ctk.CTkFrame(tab_menu,width=1000,height=600)
 		pl_fr.place(y=1,x=10)
 		tab_menu.add(pl_fr,text=plugin.TAB_NAME)
 		plugin.Tab(pl_fr)
-	if hasattr(plugin,"run"):
-		plugin.run()
+	
 	if hasattr(plugin,"runDialog"):
 		root_menu_plugins.add_command(label=str(plugin.RUN_DIALOG_NAME),foreground=text_color,command=lambda pl = plugin: pl.runDialog())
 	if hasattr(plugin,"update"):
@@ -2796,12 +2799,6 @@ def plugins_updates_run():
 		time.sleep(0.1)
 pl_update = threading.Thread(target=plugins_updates_run)
 pl_update.start()
-
-if False: # configure mode
-	import client
-	t = threading.Thread(target=client.start_client)
-	t.start()
-
 
 print(f"[info]: server connection = {db_engine.SERVER_CONNECTION}")
 

@@ -20,8 +20,6 @@ except:
 
 
 
-
-
 def decrypt_json(encrypted_data, key = key):
 	fernet = Fernet(key)
 	decrypted_data = fernet.decrypt(encrypted_data).decode()
@@ -253,7 +251,7 @@ def loaddatabase(name=saved_database_name):
 def search_path(name, database_path=database_path, tag=False):
 	# Record start time
 	start_time = time.time()
-	print(f".. searching - {name}, tag: {tag}")
+	#print(f".. searching - {name}, tag: {tag}")
 	database = {}
 	if USE_SERVER_DATABASE:
 		with open(os.path.join("temp","config.json")) as f:
@@ -268,7 +266,7 @@ def search_path(name, database_path=database_path, tag=False):
 		# Record end time and calculate search time
 		end_time = time.time()
 		search_time = (end_time - start_time) * 1000  # Convert to milliseconds
-		print(f"Found: {result} in {search_time:.2f} ms")
+		#print(f"Found: {result} in {search_time:.2f} ms")
 		return result
 	else:
 		if USE_SERVER_DATABASE:
@@ -277,20 +275,20 @@ def search_path(name, database_path=database_path, tag=False):
 				results = os.path.join("temp",database[name].get("png"))
 				end_time = time.time()
 				search_time = (end_time - start_time) * 1000
-				print(f"Found: {results} in {search_time:.2f} ms")
+				#print(f"Found: {results} in {search_time:.2f} ms")
 				return results
 			except:
-				print(f"No result found for {name}")
+				#print(f"No result found for {name}")
 				return None
 		else:
 			try:
 				results = os.path.join(database_path,"images",database[name].get("png"))
 				end_time = time.time()
 				search_time = (end_time - start_time) * 1000
-				print(f"Found: {results} in {search_time:.2f} ms")
+				#print(f"Found: {results} in {search_time:.2f} ms")
 				return results
 			except:
-				print(f"No result found for {name}")
+				#print(f"No result found for {name}")
 				return None
 
 
@@ -379,7 +377,17 @@ def load_tags(path=database_path):
 	return tags
 
 
+additional_data = ""
+
+def add_compile_data(data):
+	global additional_data
+	additional_data += "\n" + str(data)
+
+
+
+
 def export_data(gens,path = "./exported_data"):
+	global additional_data
 	export_data = ""
 	remove_ids = load_removed_crfating_ids()
 	
@@ -517,6 +525,7 @@ def export_data(gens,path = "./exported_data"):
 	#export_data = generate_hidec(export_data)
 	print("[info]: generating edited tags")
 	export_data = generate_tags(export_data)
+	export_data += additional_data
 	print("Success! generating Done")
 	with open(os.path.join(path,"data.js"),"w") as f:
 		f.write(export_data)

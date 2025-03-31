@@ -1,6 +1,7 @@
 import os
 import shutil
 import tkinter as tk
+import customtkinter as ctk
 from tkinter import messagebox, ttk
 import subprocess
 import json
@@ -140,17 +141,17 @@ def load_projects():
 	project_dirs = [d for d in os.listdir('workspaces') if os.path.isdir(os.path.join('workspaces', d))]
 		
 	for project_name in project_dirs:
-		frame = tk.Frame(project_frame,background=dark_bg_color,highlightbackground=outline_collor,highlightcolor=outline_collor,highlightthickness=1)
+		frame = ctk.CTkFrame(project_frame)
 		frame.pack(fill=tk.X, padx=5, pady=5)
 
-		label = tk.Label(frame, text=project_name, anchor="w",background=dark_bg_color,foreground=text_color)
-		label.pack(side=tk.LEFT, fill=tk.X, expand=True)
+		label = ctk.CTkLabel(frame, text=project_name)
+		label.pack(side="left",padx=5,pady=5)
 
-		open_btn = tk.Button(frame, text="Open", command=lambda p=project_name: open_project(p),background=dark_bg_color,activebackground=dark_bg_color,foreground=text_color,activeforeground=text_color,highlightbackground=outline_collor,highlightcolor=outline_collor,highlightthickness=1)
-		open_btn.pack(side=tk.RIGHT)
+		open_btn = ctk.CTkButton(frame, text="Open", command=lambda p=project_name: open_project(p))
+		open_btn.pack(side="right",padx=5,pady=5)
 
-		delete_btn = tk.Button(frame, text="Delete", command=lambda p=project_name: delete_project(p),background=dark_bg_color,activebackground=dark_bg_color,foreground=text_color,activeforeground=text_color,highlightbackground=outline_collor,highlightcolor=outline_collor,highlightthickness=1)
-		delete_btn.pack(side=tk.RIGHT)
+		delete_btn = ctk.CTkButton(frame, text="Delete", command=lambda p=project_name: delete_project(p))
+		delete_btn.pack(side="right",padx=5,pady=5)
 
 def run():
 	try:
@@ -161,38 +162,32 @@ def run():
 	finally:
 		root.quit()
 		
+def run_plugin_manager():
+	try:
+		subprocess.Popen([sys.executable, "PluginManager.py"])
+	except Exception as e:
+		print(f"Error running main.py: {e}")
+	finally:
+		root.quit()
 
 
-
-
-root = tk.Tk()
+ctk.set_default_color_theme("./assets/themes/default.json")
+root = ctk.CTk()
 #ico = Image.open('./textures/icon.png')
 #photo = ImageTk.PhotoImage(ico)
 #root.wm_iconphoto(False, photo)
-root.title("Craftix Project Manager")
-root.config(background=dark_bg_color)
-canvas = tk.Canvas(root,background=dark_bg_color,highlightbackground=outline_collor,highlightcolor=outline_collor,highlightthickness=1)
-scrollbar = ttk.Scrollbar(root, orient="vertical", command=canvas.yview)
-scrollable_frame = ttk.Frame(canvas)
 
-scrollable_frame.bind(
-	"<Configure>",
-	lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
-)
+root.title("Craftix3.12.1")
+root.geometry("960x540")
 
-canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
-canvas.configure(yscrollcommand=scrollbar.set)
+ctk.CTkButton(root,text="Open PluginManager",command=run_plugin_manager).pack(side="top",padx=5,pady=5,anchor="e")
 
-project_frame = tk.Frame(scrollable_frame,background=dark_bg_color)
-project_frame.pack(fill=tk.BOTH, expand=True)
+project_frame = ctk.CTkScrollableFrame(root)
+project_frame.pack(fill="both",side="top",expand=True)
+add_project_button = ctk.CTkButton(root, text="Add Project", command=add_project)
+add_project_button.pack(pady=10,side="bottom",fill="x")
 
 
-add_project_button = tk.Button(root, text="Add Project", command=add_project,background=light_bg_color,activebackground=dark_bg_color,foreground=text_color,activeforeground=text_color,highlightbackground=outline_collor,highlightcolor=outline_collor,highlightthickness=1)
-add_project_button.pack(pady=10)
-
-
-canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
 load_projects()
 

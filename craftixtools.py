@@ -3,6 +3,8 @@ from core import services
 from core import generator
 import tkinter as tk
 from core import db_engine
+import os
+import json
 from PIL import Image,ImageTk
 import customtkinter as ctk
 from core.ui import colorschem
@@ -286,5 +288,24 @@ class ResultsInput(ctk.CTkFrame):  # Hlavní rám
 		except:
 			pass
 
+
+class FileAccessManager():
+	def __init__(self,file,empty={}):
+		self.empty = empty
+		self.file = os.path.join(db_engine.projects_path,db_engine.project_name,file)
+		self.check_file()
+	def check_file(self):
+		if not os.path.exists(self.file):
+			self.create_empty()
+	def create_empty(self):
+		self.write(self.empty)
+	def write(self,data):
+		with open(self.file,"w") as f:
+			f.write(json.dumps(data,indent="\t"))
+	def read(self):
+		data = {}
+		with open(self.file) as f:
+			data = json.loads(f.read())
+		return data
 
 

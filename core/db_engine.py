@@ -262,11 +262,11 @@ def search_path(name, database_path=database_path, tag=False):
 	
 	if tag:
 		
-		result = os.path.join("./textures","tag.png")
+		result = os.path.join("./assets","textures","tag.png")
 		# Record end time and calculate search time
 		end_time = time.time()
 		search_time = (end_time - start_time) * 1000  # Convert to milliseconds
-		#print(f"Found: {result} in {search_time:.2f} ms")
+		print(f"Found: {result} in {search_time:.2f} ms")
 		return result
 	else:
 		if USE_SERVER_DATABASE:
@@ -275,7 +275,7 @@ def search_path(name, database_path=database_path, tag=False):
 				results = os.path.join("temp",database[name].get("png"))
 				end_time = time.time()
 				search_time = (end_time - start_time) * 1000
-				#print(f"Found: {results} in {search_time:.2f} ms")
+				print(f"Found: {results} in {search_time:.2f} ms")
 				return results
 			except:
 				#print(f"No result found for {name}")

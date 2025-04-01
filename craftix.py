@@ -29,6 +29,7 @@ import datetime
 from core.tknodesystem import *
 import uuid
 
+
 text_color = colorschem.text_color
 ctk.set_appearance_mode(settings.config.get("mode"))
 ctk.set_default_color_theme(os.path.join("./assets/themes",f"{settings.config.get("them")}.json"))
@@ -210,16 +211,13 @@ def final_remove_ids(value):
 
 def check_json_syntax(event=None):
     """Zkontroluje syntaxi JSONu a zvýrazní chybnou řádku červeně."""
-    content = tags_edit_textbox.get("1.0", "end-1c")  # Získání obsahu
-
+    content = tags_edit_textbox.get("1.0", "end-1c")
     try:
-        json.loads(content)  # Pokus o načtení JSONu
-        tags_edit_textbox.tag_remove("json_error", "1.0", "end")  # Pokud je JSON validní, odstraníme chyby
+        json.loads(content)
+        tags_edit_textbox.tag_remove("json_error", "1.0", "end")
     except json.JSONDecodeError as e:
-        # Získání řádku a sloupce chyby
         line, column = e.lineno, e.colno
 
-        # Zvýraznění celé chybné řádky červeným pozadím
         start_index = f"{line}.0"
         end_index = f"{line}.end"
         tags_edit_textbox.tag_add("json_error", start_index, end_index)
@@ -286,7 +284,8 @@ def update_tag_database():
 			tags.append(i)
 	db_engine.update_tags(tags=tags)
 	database = db_engine.getall()
-	services.update_palet(services.palet,database)
+	
+	services.update_main_palet(database)
 
 def update_database():
 	database = db_engine.getall()
@@ -366,8 +365,8 @@ underlined_font0 = font.Font(family="Helvetica", size=12, underline=True)
 DataAPI.set_root(root_window)
 DataAPI.set_get_global_func(get_widget_by_name)
 
-I_arrow00=ImageTk.PhotoImage(Image.open("assets/textures/arrow00.png"))
-I_slot00=ImageTk.PhotoImage(Image.open("assets/textures/slot00.png").resize((54,54),resample=0))
+I_arrow00=ImageTk.PhotoImage(Image.open("./assets/textures/arrow00.png"))
+I_slot00=ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
 def redirect_console_to_textbox(text_widget, log_file_path, highlight_green=None, highlight_red=None, highlight_yellow=None):
     if highlight_green is None:
         highlight_green = ["[ok]:", "initialized", "success", "running", "accepted", "[Success] all systems go"]
@@ -2234,19 +2233,22 @@ def update_workspace(results = []):
 		usage_arsenal_menu.bind("<<ListboxSelect>>",lambda event: services.update_parm_frame(parm_editor,usage_arsenal_menu,parm_frame))
 		usage_arsenal_menu.bind("<Button-3>",lambda event: services.arsenal_remove(usage_arsenal_menu))
 
-		
+		up = ctk.CTkButton(root,width=50,text="▲",command=lambda: services.sequence_as_move_up(usage_arsenal_menu))
+		up.place(x=560,y=175)
+		down = ctk.CTkButton(root,width=50,text="⯆",command=lambda: services.sequence_as_move_down(usage_arsenal_menu))
+		down.place(x=560,y=205)
 		loop_input=tk.Entry(root,width=5,background=light_bg_color,borderwidth=0,highlightthickness=1,highlightbackground=outline_collor,highlightcolor=outline_collor,foreground=text_color)
 		loop_input.place(x=505,y=213)
 		loop_input.bind("<KeyRelease>", lambda event:services.update_crafting_key("loops",int(loop_input.get())))
-		loop_label = tk.Label(root,text="Loops:",width=6,background=dark_bg_color,foreground=text_color)
-		loop_label.place(x=450,y=213)
+		loop_label = caption(root,text="Loops:",width=6)
+		loop_label.place(x=455,y=213)
 		caption(root,text="Input:").place(y=213,x=215)
 		module03_slot00 = tk.Button(root,image=I_slot00,borderwidth=0,highlightthickness=1,command=lambda:services.create_crafting(module03_slot00,"in"),highlightbackground=outline_collor,highlightcolor=outline_collor,background=light_bg_color)
-		module03_slot00.place(y=178,x=250)
+		module03_slot00.place(y=178,x=250+7)
 		caption(root,text="TransItem:").place(y=213,x=317)
 
 		module03_slot01 = tk.Button(root,image=I_slot00,borderwidth=0,highlightthickness=1,command=lambda:services.create_crafting(module03_slot01,"transitionalItem"),highlightbackground=outline_collor,highlightcolor=outline_collor,background=light_bg_color)
-		module03_slot01.place(y=178,x=385)
+		module03_slot01.place(y=178,x=385+10)
 		# results
 		#open the box befotre eating pizza
 		main_frame = tk.Frame(root, background=dark_bg_color)
@@ -2266,11 +2268,11 @@ def update_workspace(results = []):
 		inner_frame = tk.Frame(canvas,background=light_bg_color)
 		canvas.create_window((0, 0), window=inner_frame, anchor="nw")
 		# element database
-		element_database = [module03_slot00,module03_slot01,loop_input,loop_label,usage_arsenal_menu,arsenal_menu,main_frame,canvas,scrollbar,add_button,parm_frame,parm_editor]
+		element_database = [module03_slot00,module03_slot01,loop_input,loop_label,usage_arsenal_menu,arsenal_menu,main_frame,canvas,scrollbar,add_button,parm_frame,parm_editor,up,down]
 		def update_pressing_result(results,update_images = False):
 			global element_database
 			loop = 3
-			element_database = [module03_slot00,module03_slot01,loop_input,loop_label,usage_arsenal_menu,arsenal_menu,main_frame,canvas,scrollbar,add_button,parm_frame,parm_editor]
+			element_database = [module03_slot00,module03_slot01,loop_input,loop_label,usage_arsenal_menu,arsenal_menu,main_frame,canvas,scrollbar,add_button,parm_frame,parm_editor,up,down]
 			inputs_count = []
 			inputs_chance = []
 			input_slot = []
@@ -2430,71 +2432,71 @@ def load_crafting(name = False):
 			modules = "crafting"
 			update_workspace()
 			services.load_crafting(load_item,element_database,recipe_name_entry)
-		if type == "crafting_shapeless":
+		elif type == "crafting_shapeless":
 			modules = "crafting_shapeless"
 			update_workspace()
 			services.load_crafting(load_item,element_database,recipe_name_entry)
-		if type == "mechanical_crafting":
+		elif type == "mechanical_crafting":
 			modules = "mechanical_crafting"
 			update_workspace()
 			services.load_crafting(load_item,element_database,recipe_name_entry)
-		if type == "furnace":
+		elif type == "furnace":
 			modules = "furnace"
 			update_workspace()
 			services.load_crafting(load_item,element_database,recipe_name_entry)
-		if type == "pressing":
+		elif type == "pressing":
 			modules = "pressing"
 			update_workspace(results=crafting_database.get(load_item).get("results"))
 			services.load_crafting(load_item,element_database,recipe_name_entry)
-		if type == "stonecutting":
+		elif type == "stonecutting":
 			modules = "stonecutting"
 			update_workspace()
 			services.load_crafting(load_item,element_database,recipe_name_entry)
-		if type == "smithing_transform":
+		elif type == "smithing_transform":
 			modules = "smithing_transform"
 			update_workspace()
 			services.load_crafting(load_item,element_database,recipe_name_entry)
-		if type == "Custum Json":
+		elif type == "Custum Json":
 			modules = "Custum Json"
 			update_workspace()
 			services.load_crafting(load_item,element_database,recipe_name_entry)
-		if type == "create_mixing":
+		elif type == "create_mixing":
 			modules = "create_mixing"
 			update_workspace()
 			services.load_crafting(load_item,element_database,recipe_name_entry)
-		if type == "create_compacting":
+		elif type == "create_compacting":
 			modules = "create_compacting"
 			update_workspace()
 			services.load_crafting(load_item,element_database,recipe_name_entry)
-		if type == "create_item_application":
+		elif type == "create_item_application":
 			modules = "create_item_application"
 			update_workspace(results=crafting_database.get(load_item).get("results"))
 			services.load_crafting(load_item,element_database,recipe_name_entry)
-		if type == "create_deployng":	
+		elif type == "create_deployng":	
 			modules = "create_deployng"
 			update_workspace(results=crafting_database.get(load_item).get("results"))
 			services.load_crafting(load_item,element_database,recipe_name_entry)
-		if type == "create_crushing":
+		elif type == "create_crushing":
 			modules = "create_crushing"
 			update_workspace(results=crafting_database.get(load_item).get("results"))
 			services.load_crafting(load_item,element_database,recipe_name_entry)
-		if type == "create_milling":
+		elif type == "create_milling":
 			modules = "create_crushing"
 			update_workspace(results=crafting_database.get(load_item).get("results"))
 			services.load_crafting(load_item,element_database,recipe_name_entry)
-		if type == "create_cutting":
+		elif type == "create_cutting":
 			modules = "create_cutting"
 			update_workspace(results=crafting_database.get(load_item).get("results"))
 			services.load_crafting(load_item,element_database,recipe_name_entry)
-		if type == "Vortex":
+		elif type == "Vortex":
 			modules = "Vortex"
 			update_workspace()
 			services.load_crafting(load_item,element_database,recipe_name_entry)
-		if type == "Sequence Assembly":
+		elif type == "Sequence Assembly":
 			modules = "Sequence Assembly"
 			update_workspace(results=crafting_database.get(load_item).get("results"))
 			services.load_crafting(load_item,element_database,recipe_name_entry)
-		if type == "create_spouting":
+		elif type == "create_spouting":
 			modules = "create_spouting"
 			update_workspace(results=crafting_database.get(load_item).get("results"))
 			services.load_crafting(load_item,element_database,recipe_name_entry)
@@ -2615,6 +2617,7 @@ def update_search(event):
 		project_selector_list.insert(tk.END,i)
 
 project_selector_search.bind("<KeyRelease>",update_search)
+project_selector_list.unbind("<<ListboxSelect>>")
 project_selector_list.bind("<<ListboxSelect>>",load_selected_crafting)
 
 def update_selector_list():
@@ -2689,36 +2692,6 @@ def clear_workspace():
 
 
 
-def download_plugins():
-	SERVER_URL = 'http://192.168.1.81:5000'
-	PLUGIN_PATH = './plugins'
-	try:
-		response = requests.get(f"{SERVER_URL}/plugins")
-		files = response.json()
-		print(files)
-		file = easydialog.choicebox("Plugin Downloader",options=files,prompt="Chose Plugin For Download")
-		if not file == None:
-			file_url = f"{SERVER_URL}/plugins/{file}"
-			response = requests.get(file_url, stream=True)
-			if response.status_code == 404:
-				print(f"[-] File not found on server: {file}")
-				return
-			file_path = os.path.join(PLUGIN_PATH, file)
-			os.makedirs(os.path.dirname(file_path), exist_ok=True)
-
-			
-			with open(file_path, 'wb') as f:
-				for chunk in response.iter_content(chunk_size=4096):
-					if chunk:
-						f.write(chunk)
-
-			print(f"[+] Plugin Downloaded: {file}")			
-
-
-	except:
-		pass
-
-
 
 recipe_name_frame = ctk.CTkFrame(root,width=190,height=555)
 recipe_name_frame.pack(fill="y",anchor="e",side="left",pady=4,padx=4)
@@ -2729,8 +2702,7 @@ recipe_name_entry.pack_propagate(0)
 type_labbel = ctk.CTkLabel(recipe_name_frame,text="Type: ")
 type_labbel.pack(fill="x",pady=4,padx=4)
 
-#download plugins
-#root_menu_tools.add_command(label="Download Plugins",foreground=text_color,command=download_plugins)
+
 
 root_window.bind_all("<Control-s>",lambda event:save_data())
 root_window.bind_all("<Control-n>",lambda event:create_crafting())

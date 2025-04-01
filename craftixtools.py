@@ -59,8 +59,8 @@ class ItemInput(tk.Button):
 			tag = False
 			if str(selected_minecraft_item).startswith("tag:"):
 				tag = True
-			else:
-				preview_image_button = ImageTk.PhotoImage(Image.open(db_engine.search_path(selected_item,tag=tag)).resize((54,54),resample=0))
+
+			preview_image_button = ImageTk.PhotoImage(Image.open(db_engine.search_path(selected_item,tag=tag)).resize((54,54),resample=0))
 			self.config(image=preview_image_button)
 			self.image = preview_image_button
 		except:
@@ -69,16 +69,21 @@ class ItemInput(tk.Button):
 	def update_Item_Input(self):
 		try:
 			selected_minecraft_item = services.get_selected_item()
-			services.update_crafting_key(self.id,selected_minecraft_item)
-			selected_item = services.remove_mod(selected_minecraft_item)
-			tag = False
-			if str(selected_minecraft_item).startswith("tag:"):
-				tag = True
+			if selected_minecraft_item == None:
+				services.update_crafting_key(self.id,"")
+				self.config(image=I_slot00)
+				self.image = I_slot00
 			else:
+				services.update_crafting_key(self.id,selected_minecraft_item)
+				selected_item = services.remove_mod(selected_minecraft_item)
+				tag = False
+				if str(selected_minecraft_item).startswith("tag:"):
+					tag = True
+				
 				preview_image_button = ImageTk.PhotoImage(Image.open(db_engine.search_path(selected_item,tag=tag)).resize((54,54),resample=0))
-			self.config(image=preview_image_button)
-			self.image = preview_image_button
-			ok(services.crafting)
+				self.config(image=preview_image_button)
+				self.image = preview_image_button
+				ok(services.crafting)
 		except:
 			pass
 

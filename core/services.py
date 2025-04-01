@@ -10,6 +10,7 @@ from core.graphics import border_render
 import json
 from customtkinter import CTkImage
 from core import DataAPI
+from collections import OrderedDict
 import platform
 from core.ui import colorschem
 import string
@@ -33,32 +34,32 @@ light_bg_color = colorschem.light_bg_color
 text_color = colorschem.text_color
 
 def adjust_dpi_scale(root, root_resolution):
-    # Získání aktuálního rozlišení obrazovky
-    screen_width = root.winfo_screenwidth()    
-    screen_height = root.winfo_screenheight()
+	# Získání aktuálního rozlišení obrazovky
+	screen_width = root.winfo_screenwidth()	
+	screen_height = root.winfo_screenheight()
 
-    # Rozlišování mezi Windows a Linux pro různé škálovací faktory pro widgety
-    if platform.system() == "Windows":
-        scale_factor = 1.2  # Menší škálování pro Windows
-        font_scale_factor = 1.2	  # Vyšší škálování pro písmo na Windows
-    else:
-        scale_factor = 1.0  # Normální škálování pro Linux
-        font_scale_factor = 1.0  # Vyšší škálování pro písmo na Linuxu
+	# Rozlišování mezi Windows a Linux pro různé škálovací faktory pro widgety
+	if platform.system() == "Windows":
+		scale_factor = 1.2  # Menší škálování pro Windows
+		font_scale_factor = 1.2	  # Vyšší škálování pro písmo na Windows
+	else:
+		scale_factor = 1.0  # Normální škálování pro Linux
+		font_scale_factor = 1.0  # Vyšší škálování pro písmo na Linuxu
 
-    # Výpočet škálovacího faktoru na základě poměru rozlišení
-    scale_factor_x = screen_width / root_resolution[0]
-    scale_factor_y = screen_height / root_resolution[1]
-    scale_factor_dynamic = min(scale_factor_x, scale_factor_y)  # Zvol nejmenší faktor pro konzistentní škálování
+	# Výpočet škálovacího faktoru na základě poměru rozlišení
+	scale_factor_x = screen_width / root_resolution[0]
+	scale_factor_y = screen_height / root_resolution[1]
+	scale_factor_dynamic = min(scale_factor_x, scale_factor_y)  # Zvol nejmenší faktor pro konzistentní škálování
 
-    # Aplikace jemného škálování podle manuálně nastaveného faktoru
-    scale_factor = min(scale_factor_dynamic, scale_factor)  # Ujisti se, že nebude větší než dynamický faktor
+	# Aplikace jemného škálování podle manuálně nastaveného faktoru
+	scale_factor = min(scale_factor_dynamic, scale_factor)  # Ujisti se, že nebude větší než dynamický faktor
 
-    # Aplikace měřítka na widgety
-    root.tk.call('tk', 'scaling', scale_factor)
+	# Aplikace měřítka na widgety
+	root.tk.call('tk', 'scaling', scale_factor)
 
-    # Nastavení velikosti písma podle font_scale_factor
-    default_font_size = int(10 * font_scale_factor)  # Používáme jiný faktor pro písmo
-    root.option_add("*Font", f"Arial {default_font_size}")
+	# Nastavení velikosti písma podle font_scale_factor
+	default_font_size = int(10 * font_scale_factor)  # Používáme jiný faktor pro písmo
+	root.option_add("*Font", f"Arial {default_font_size}")
 
 
 inv_screen=None
@@ -67,6 +68,13 @@ def update_palet(palet,items):
 	palet.delete(0,tk.END)
 	for item in items:
 		palet.insert(tk.END,item)
+
+def update_main_palet(db):
+	global palet, database
+	database = db
+	palet.delete(0,tk.END)
+	for i in db:
+		palet.insert(tk.END,i)
 
 def search(item,database):
 	item = item.lower()
@@ -436,9 +444,9 @@ def create_crafting(button,crafting_index):
 							pass
 				print(crafting)
 				if settings.config.get("BorderRender") == True:
-					preview_image_button = border_render.generate_border("./textures/slot00.png")
+					preview_image_button = border_render.generate_border("./assets/textures/slot00.png")
 				else:
-					preview_image_button = ImageTk.PhotoImage(Image.open("./textures/slot00.png").resize((54,54),resample=0))
+					preview_image_button = ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
 				button.config(image=preview_image_button)
 				button.image = preview_image_button
 		elif crafting.get("type") == "crafting_shapeless":
@@ -477,9 +485,9 @@ def create_crafting(button,crafting_index):
 							pass
 				print(crafting)
 				if settings.config.get("BorderRender") == True:
-					preview_image_button = border_render.generate_border("./textures/slot00.png")
+					preview_image_button = border_render.generate_border("./assets/textures/slot00.png")
 				else:
-					preview_image_button = ImageTk.PhotoImage(Image.open("./textures/slot00.png").resize((54,54),resample=0))
+					preview_image_button = ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
 				button.config(image=preview_image_button)
 				button.image = preview_image_button
 		elif crafting.get("type") == "furnace":
@@ -516,9 +524,9 @@ def create_crafting(button,crafting_index):
 					elif crafting_index == "in":
 						crafting.pop("in")
 					if settings.config.get("BorderRender") == True:
-						preview_image_button = border_render.generate_border("./textures/slot00.png")
+						preview_image_button = border_render.generate_border("./assets/textures/slot00.png")
 					else:
-						preview_image_button = ImageTk.PhotoImage(Image.open("./textures/slot00.png").resize((54,54),resample=0))
+						preview_image_button = ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
 					button.config(image=preview_image_button)
 					button.image = preview_image_button
 					print(crafting)
@@ -547,9 +555,9 @@ def create_crafting(button,crafting_index):
 					if crafting_index == "in":
 						crafting.pop("in")
 					if settings.config.get("BorderRender") == True:
-						preview_image_button = border_render.generate_border("./textures/slot00.png")
+						preview_image_button = border_render.generate_border("./assets/textures/slot00.png")
 					else:
-						preview_image_button = ImageTk.PhotoImage(Image.open("./textures/slot00.png").resize((54,54),resample=0))
+						preview_image_button = ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
 					button.config(image=preview_image_button)
 					button.image = preview_image_button
 					print(crafting)
@@ -592,9 +600,9 @@ def create_crafting(button,crafting_index):
 					elif crafting_index == "in":
 						crafting.pop("in")
 					if settings.config.get("BorderRender") == True:
-						preview_image_button = border_render.generate_border("./textures/slot00.png")
+						preview_image_button = border_render.generate_border("./assets/textures/slot00.png")
 					else:
-						preview_image_button = ImageTk.PhotoImage(Image.open("./textures/slot00.png").resize((54,54),resample=0))
+						preview_image_button = ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
 					button.config(image=preview_image_button)
 					button.image = preview_image_button
 					print(crafting)
@@ -669,9 +677,9 @@ def create_crafting(button,crafting_index):
 					elif crafting_index == "addition":
 						crafting.pop("addition")
 					if settings.config.get("BorderRender") == True:
-						preview_image_button = border_render.generate_border("./textures/slot00.png")
+						preview_image_button = border_render.generate_border("./assets/textures/slot00.png")
 					else:
-						preview_image_button = ImageTk.PhotoImage(Image.open("./textures/slot00.png").resize((54,54),resample=0))
+						preview_image_button = ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
 					button.config(image=preview_image_button)
 					button.image = preview_image_button
 					print(crafting)
@@ -700,9 +708,9 @@ def create_crafting(button,crafting_index):
 					if crafting_index == "in":
 						crafting.pop("in")
 					if settings.config.get("BorderRender") == True:
-						preview_image_button = border_render.generate_border("./textures/slot00.png")
+						preview_image_button = border_render.generate_border("./assets/textures/slot00.png")
 					else:
-						preview_image_button = ImageTk.PhotoImage(Image.open("./textures/slot00.png").resize((54,54),resample=0))
+						preview_image_button = ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
 					button.config(image=preview_image_button)
 					button.image = preview_image_button
 					print(crafting)
@@ -731,9 +739,9 @@ def create_crafting(button,crafting_index):
 					if crafting_index == "in":
 						crafting.pop("in")
 					if settings.config.get("BorderRender") == True:
-						preview_image_button = border_render.generate_border("./textures/slot00.png")
+						preview_image_button = border_render.generate_border("./assets/textures/slot00.png")
 					else:
-						preview_image_button = ImageTk.PhotoImage(Image.open("./textures/slot00.png").resize((54,54),resample=0))
+						preview_image_button = ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
 					button.config(image=preview_image_button)
 					button.image = preview_image_button
 					print(crafting)
@@ -762,9 +770,9 @@ def create_crafting(button,crafting_index):
 					if crafting_index == "in":
 						crafting.pop("in")
 					if settings.config.get("BorderRender") == True:
-						preview_image_button = border_render.generate_border("./textures/slot00.png")
+						preview_image_button = border_render.generate_border("./assets/textures/slot00.png")
 					else:
-						preview_image_button = ImageTk.PhotoImage(Image.open("./textures/slot00.png").resize((54,54),resample=0))
+						preview_image_button = ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
 					button.config(image=preview_image_button)
 					button.image = preview_image_button
 					print(crafting)
@@ -806,9 +814,9 @@ def create_crafting(button,crafting_index):
 					elif crafting_index == "transitionalItem":
 						crafting.pop("transitionalItem")
 					if settings.config.get("BorderRender") == True:
-						preview_image_button = border_render.generate_border("./textures/slot00.png")
+						preview_image_button = border_render.generate_border("./assets/textures/slot00.png")
 					else:
-						preview_image_button = ImageTk.PhotoImage(Image.open("./textures/slot00.png").resize((54,54),resample=0))
+						preview_image_button = ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
 					button.config(image=preview_image_button)
 					button.image = preview_image_button
 					print(crafting)
@@ -849,18 +857,18 @@ def create_crafting(button,crafting_index):
 					if crafting_index == "in":
 						crafting.pop("in")
 					if settings.config.get("BorderRender") == True:
-						preview_image_button = border_render.generate_border("./textures/slot00.png")
+						preview_image_button = border_render.generate_border("./assets/textures/slot00.png")
 					else:
-						preview_image_button = ImageTk.PhotoImage(Image.open("./textures/slot00.png").resize((54,54),resample=0))
+						preview_image_button = ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
 					button.config(image=preview_image_button)
 					button.image = preview_image_button
 					print(crafting)
 					if crafting_index == "subin":
 						crafting.pop("subin")
 					if settings.config.get("BorderRender") == True:
-						preview_image_button = border_render.generate_border("./textures/slot00.png")
+						preview_image_button = border_render.generate_border("./assets/textures/slot00.png")
 					else:
-						preview_image_button = ImageTk.PhotoImage(Image.open("./textures/slot00.png").resize((54,54),resample=0))
+						preview_image_button = ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
 					button.config(image=preview_image_button)
 					button.image = preview_image_button
 					print(crafting)
@@ -1847,7 +1855,7 @@ def load_crafting(load_item,buttons,recipe_name_entry):
 				buttons[0].config(image=image)
 				buttons[0].image=image
 			except:
-				print("[error] error in load image in button (maybe it's empty)")
+				pass
 			try:
 				item = remove_mod(item_crafting_data.get("transitionalItem"))
 				tag = False
@@ -1860,14 +1868,14 @@ def load_crafting(load_item,buttons,recipe_name_entry):
 				buttons[1].config(image=image)
 				buttons[1].image=image
 			except:
-				print("[error] error in load image in button (maybe it's empty)")
+				pass
 			buttons[2].delete(0,tk.END)
 			buttons[2].insert(0,item_crafting_data.get("loops"))
 			data_list = crafting["sequence"].keys()
 			for data in data_list:
-				buttons[4].insert(tk.END,f"{crafting["sequence"][data].get("type")}                                                                  id:{data}")
+				buttons[4].insert(tk.END,f"{crafting["sequence"][data].get("type")}                                                                   id:{data}")
 
-			for i in list(range(12,len(crafting.get("results")) + 12)):
+			for i in list(range(14,len(crafting.get("results")) + 14)):
 				item = remove_mod(buttons[i].result.get("item"))
 				if not item == None:
 					tag = False
@@ -1927,6 +1935,70 @@ def load_crafting(load_item,buttons,recipe_name_entry):
 #TODO: load crafting logic
 
 
+def move_key_up(d, key):
+	keys = list(d.keys())		
+	if key not in keys or keys.index(key) == 0:
+		return d
+	index = keys.index(key)
+	keys[index], keys[index - 1] = keys[index - 1], keys[index]
+	return OrderedDict((k, d[k]) for k in keys)
+
+def move_key_down(d, key):
+	keys = list(d.keys())		
+	if key not in keys or keys.index(key) == 0:
+		return d
+	index = keys.index(key)
+	keys[index], keys[index + 1] = keys[index + 1], keys[index]
+	return OrderedDict((k, d[k]) for k in keys)
+
+def sequence_as_move_up(listbox):
+	global crafting
+	try:
+		selected = listbox.curselection()
+		if not selected:
+			return
+		index = selected[0]
+		if index == 0:
+			return
+			
+		text = listbox.get(index)
+		sequence = crafting.get("sequence")
+		seq_keys = sequence.keys()
+		for key in seq_keys:
+			if f"id:{key}" in text:
+		
+				sequence = move_key_up(sequence,key)
+		crafting["sequence"]=sequence
+		listbox.delete(index)
+		listbox.insert(index - 1, text)
+		listbox.selection_set(index - 1)
+	except:
+		pass
+
+def sequence_as_move_down(listbox):
+	global crafting
+	try:
+		selected = listbox.curselection()
+		if not selected:
+			return
+		index = selected[0]
+		if index == 0:
+			return
+			
+		text = listbox.get(index)
+		sequence = crafting.get("sequence")
+		seq_keys = sequence.keys()
+		for key in seq_keys:
+			if f"id:{key}" in text:
+		
+				sequence = move_key_down(sequence,key)
+		crafting["sequence"]=sequence
+		listbox.delete(index)
+		listbox.insert(index + 1, text)
+		listbox.selection_set(index + 1)
+	except:
+		pass
+
 def create_item_application_updates(id,element):
 	item = get_selected_item()
 	if not item == None:
@@ -1946,9 +2018,9 @@ def create_item_application_updates(id,element):
 		crafting[id] = ""
 		try:
 			if settings.config.get("BorderRender") == True:
-				preview_image_button = border_render.generate_border("./textures/slot00.png")
+				preview_image_button = border_render.generate_border("./assets/textures/slot00.png")
 			else:
-				preview_image_button = ImageTk.PhotoImage(Image.open("./textures/slot00.png").resize((54,54),resample=0))
+				preview_image_button = ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
 			element.config(image=preview_image_button)
 			element.image = preview_image_button
 			print(crafting)
@@ -1997,9 +2069,9 @@ def set_mixing_fluids(button,index):
 		crafting[index] = ""
 		try:
 			if settings.config.get("BorderRender") == True:
-				preview_image_button = border_render.generate_border("./textures/slot00.png")
+				preview_image_button = border_render.generate_border("./assets/textures/slot00.png")
 			else:
-				preview_image_button = ImageTk.PhotoImage(Image.open("./textures/slot00.png").resize((54,54),resample=0))
+				preview_image_button = ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
 			button.config(image=preview_image_button)
 			button.image = preview_image_button
 			print(crafting)
@@ -2026,9 +2098,9 @@ def set_mixing_items_ins(button,index):
 		crafting["ins_items"][index] = ""
 		try:
 			if settings.config.get("BorderRender") == True:
-				preview_image_button = border_render.generate_border("./textures/slot00.png")
+				preview_image_button = border_render.generate_border("./assets/textures/slot00.png")
 			else:
-				preview_image_button = ImageTk.PhotoImage(Image.open("./textures/slot00.png").resize((54,54),resample=0))
+				preview_image_button = ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
 			button.config(image=preview_image_button)
 			button.image = preview_image_button
 			print(crafting)
@@ -2054,9 +2126,9 @@ def set_mixing_items_results(button,index):
 		crafting["results_items"][index] = ""
 		try:
 			if settings.config.get("BorderRender") == True:
-				preview_image_button = border_render.generate_border("./textures/slot00.png")
+				preview_image_button = border_render.generate_border("./assets/textures/slot00.png")
 			else:
-				preview_image_button = ImageTk.PhotoImage(Image.open("./textures/slot00.png").resize((54,54),resample=0))
+				preview_image_button = ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
 			button.config(image=preview_image_button)
 			button.image = preview_image_button
 			print(crafting)
@@ -2126,9 +2198,9 @@ def update_pressing_slot_images(buttons):
 					image = ImageTk.PhotoImage(Image.open(db_engine.search_path(item,tag=tag)).resize((54,54),resample=0))
 			else:
 				if settings.config.get("BorderRender") == True:
-					image = border_render.generate_border("textures/slot00.png")
+					image = border_render.generate_border("./assets/textures/slot00.png")
 				else:
-					image = ImageTk.PhotoImage(Image.open("textures/slot00.png").resize((54,54),resample=0))
+					image = ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
 			buttons[i].config(image=image)
 			buttons[i].image=image
 

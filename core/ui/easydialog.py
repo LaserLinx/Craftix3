@@ -8,6 +8,17 @@ dark_bg_color = colorschem.dark_bg_color
 light_bg_color = colorschem.light_bg_color
 text_color = colorschem.text_color
 
+class shortcut():
+	def __init__(self,widget):
+		self.widget = widget
+		self.widget.bind("<Control-a>",self.select_all)
+	
+	def select_all(self,event):
+			event.widget.select_range(0, tk.END)
+			event.widget.icursor(tk.END)
+			return "break"
+
+
 
 def choicebox(title, options, prompt="pick an item", bg="#333333", fg="#eeeeee"):
 	result = [None]
@@ -76,6 +87,7 @@ def choicebox(title, options, prompt="pick an item", bg="#333333", fg="#eeeeee")
 	search_var = tk.StringVar()
 	search_entry = tk.Entry(root, textvariable=search_var, bg='#444444', fg=fg, insertbackground=fg)
 	search_entry.pack(pady=5)
+	shortcut(search_entry)
 	search_entry.bind('<KeyRelease>', on_search)
 
 	listbox = tk.Listbox(root, selectmode=tk.SINGLE, bg=bg, fg=fg, highlightbackground="#00cccc",
@@ -149,6 +161,7 @@ def enterbox(msg, title="Enter Input", bg="#222222", fg="#eeeeee"):
 	root.focus_set()
 	tk.Label(root, text=f"\n\n{msg}\n\n", bg=bg, fg=fg).pack(pady=10)
 	entry = tk.Entry(root, bg='#333333', fg=fg, insertbackground=fg,highlightbackground="#00cccc",highlightcolor="#00cccc",highlightthickness=1,width=120)
+	shortcut(entry)
 	entry.pack(pady=10)
 	entry.focus_set()
 	tk.Button(root, text="OK", command=on_ok, bg='#444444', fg='#eeeeee',highlightbackground="#00cccc",highlightcolor="#00cccc",highlightthickness=1,activebackground="#333333",activeforeground="#eeeeee").pack(pady=10)
@@ -169,6 +182,7 @@ def editbox(msg, title="Enter Input", bg="#222222", fg="#eeeeee",editable_text =
 	tk.Label(root, text=f"\n\n{msg}\n\n", bg=bg, fg=fg).pack(pady=10)
 	entry = tk.Entry(root, bg='#333333', fg=fg, insertbackground=fg,highlightbackground="#00cccc",highlightcolor="#00cccc",highlightthickness=1,width=120)
 	entry.insert(0,str(editable_text))
+	shortcut(entry)
 	entry.pack(pady=10)
 	entry.focus_set()
 	tk.Button(root, text="OK", command=on_ok, bg='#444444', fg='#eeeeee',highlightbackground="#00cccc",highlightcolor="#00cccc",highlightthickness=1,activebackground="#333333",activeforeground="#eeeeee").pack(pady=10)

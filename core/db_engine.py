@@ -377,6 +377,86 @@ def load_tags(path=database_path):
 	return tags
 
 
+def remove_crafting(name,path = save_path):
+	if SERVER_CONNECTION:
+		print("[info] trying connec to the server")
+		response = requests.post(SERVER_URL,json={"type": "save.craftix","operation": "get"})
+		if response.status_code == 200:
+			data = decrypt_json(response.json().get("data"))
+		else:
+			print(f"[error]: connection error status code: {response.status_code}")
+			return
+		try:
+			data.pop(name)
+		except:
+			print("[error]: error in removing")
+		response = requests.post(SERVER_URL,json={"type": "save.craftix","operation": "post","data": str(encrypt_json(data))})
+		if response.status_code == 200:
+			print("[info] crafting updated")
+		else:
+			print(f"[error]: connection error status code: {response.status_code}")
+			return
+	else:
+		data = {}
+		with open(path,"r") as f:
+			data = decrypt_json(f.read())
+			f.close()
+		try:
+			data.pop(name)
+			with open(path,"w") as f:
+				f.write(encrypt_json(data))
+				f.close()
+			print("[info] crafting be deleted!")
+		except:
+			print(f"[error] in removing {name}")
+
+
+def load_removed_crfating_ids(path=disemble_craft_save_path):
+	if SERVER_CONNECTION:
+		response = requests.post(SERVER_URL,json={"type": "disemble_craft_ids.craftix","operation": "get"})
+		if response.status_code == 200:
+			data = decrypt_json(response.json().get("data"))
+			return data.get("ids")
+		else:
+			print(f"[error]: connection error status code {response.status_code}")
+	else:
+		data = {}
+		with open(path,"r") as f:
+			data = decrypt_json(f.read())
+			f.close()
+		return data.get("ids")
+
+def save_removed_crfating_ids(path=disemble_craft_save_path,ids=[]):
+	if SERVER_CONNECTION:
+		print(["[info]: saving tags into server"])
+		data = {}
+		data["ids"] = ids
+		response = requests.post(SERVER_URL,json={"type": "disemble_craft_ids.craftix","operation": "post","data": str(encrypt_json(data))})
+		if response.status_code == 200:
+			print("[info] data saved on server")
+		else:
+			print(f"[error]: connection error status code {response.status_code}")
+	else:
+		data = {}
+		data["ids"] = ids
+		with open(path,"w") as f:
+			f.write(encrypt_json(data))
+			f.close()
+	
+
+def load_settings():
+	with open("settings.json") as f:
+		data = json.loads(f.read())
+		f.close()
+	return data
+def save_settings(data):
+	with open("settings.json","w") as f:
+		f.write(json.dumps(data))		
+		f.close()
+
+
+
+
 additional_data = ""
 
 def add_compile_data(data):
@@ -532,82 +612,6 @@ def export_data(gens,path = "./exported_data"):
 		f.close()
 
 
-def remove_crafting(name,path = save_path):
-	if SERVER_CONNECTION:
-		print("[info] trying connec to the server")
-		response = requests.post(SERVER_URL,json={"type": "save.craftix","operation": "get"})
-		if response.status_code == 200:
-			data = decrypt_json(response.json().get("data"))
-		else:
-			print(f"[error]: connection error status code: {response.status_code}")
-			return
-		try:
-			data.pop(name)
-		except:
-			print("[error]: error in removing")
-		response = requests.post(SERVER_URL,json={"type": "save.craftix","operation": "post","data": str(encrypt_json(data))})
-		if response.status_code == 200:
-			print("[info] crafting updated")
-		else:
-			print(f"[error]: connection error status code: {response.status_code}")
-			return
-	else:
-		data = {}
-		with open(path,"r") as f:
-			data = decrypt_json(f.read())
-			f.close()
-		try:
-			data.pop(name)
-			with open(path,"w") as f:
-				f.write(encrypt_json(data))
-				f.close()
-			print("[info] crafting be deleted!")
-		except:
-			print(f"[error] in removing {name}")
-
-
-def load_removed_crfating_ids(path=disemble_craft_save_path):
-	if SERVER_CONNECTION:
-		response = requests.post(SERVER_URL,json={"type": "disemble_craft_ids.craftix","operation": "get"})
-		if response.status_code == 200:
-			data = decrypt_json(response.json().get("data"))
-			return data.get("ids")
-		else:
-			print(f"[error]: connection error status code {response.status_code}")
-	else:
-		data = {}
-		with open(path,"r") as f:
-			data = decrypt_json(f.read())
-			f.close()
-		return data.get("ids")
-
-def save_removed_crfating_ids(path=disemble_craft_save_path,ids=[]):
-	if SERVER_CONNECTION:
-		print(["[info]: saving tags into server"])
-		data = {}
-		data["ids"] = ids
-		response = requests.post(SERVER_URL,json={"type": "disemble_craft_ids.craftix","operation": "post","data": str(encrypt_json(data))})
-		if response.status_code == 200:
-			print("[info] data saved on server")
-		else:
-			print(f"[error]: connection error status code {response.status_code}")
-	else:
-		data = {}
-		data["ids"] = ids
-		with open(path,"w") as f:
-			f.write(encrypt_json(data))
-			f.close()
-	
-
-def load_settings():
-	with open("settings.json") as f:
-		data = json.loads(f.read())
-		f.close()
-	return data
-def save_settings(data):
-	with open("settings.json","w") as f:
-		f.write(json.dumps(data))		
-		f.close()
 
 
 

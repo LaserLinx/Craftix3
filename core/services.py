@@ -77,12 +77,15 @@ def update_main_palet(db):
 		palet.insert(tk.END,i)
 
 def search(item,database):
-	item = item.lower()
-	results = []
-	for i in database:
-		if item in i:
-			results.append(i)
-	return results
+	try:
+		item = item.lower()
+		results = []
+		for i in database:
+			if item in i:
+				results.append(i)
+		return results
+	except:
+		return []
 def remove_item(palet):
 	saved_palet_database = db_engine.loaddatabase()
 	items = saved_palet_database
@@ -170,6 +173,17 @@ def load_item(palet):
 		
 	else:
 		pass
+
+
+class shortcut():
+	def __init__(self,widget):
+		self.widget = widget
+		self.widget.bind("<Control-a>",self.select_all)
+	
+	def select_all(self,event):
+			event.widget.select_range(0, ctk.END)
+			event.widget.icursor(ctk.END)
+			return "break"
 
 
 
@@ -2298,7 +2312,8 @@ def inv_open(root):
 		update_palet(palet,database)
 		search_entry = ctk.CTkEntry(inv_screen,height=21,width=298)
 		search_entry.place(x=358,y=2)
-		search_entry.bind("<Control-a>",lambda event: search_entry.select_range(0,ctk.END))
+		shortcut(search_entry)
+
 		search_entry.bind("<KeyRelease>", lambda event:update_palet(palet,search(str(search_entry.get()),database)))
 		saved_palet = tk.Listbox(inv_screen,height=18,width=38,background=light_bg_color,foreground=text_color,highlightbackground=outline_collor,highlightcolor=outline_collor,selectbackground=outline_collor)
 		saved_palet.place(x=10,y=28)
@@ -2316,7 +2331,7 @@ def inv_open(root):
 		search_entry_saved = ctk.CTkEntry(inv_screen,height=21,width=306)
 		search_entry_saved.place(x=8,y=2)
 		search_entry_saved.bind("<KeyRelease>", lambda event:update_palet(saved_palet,search(str(search_entry_saved.get()),database=db_engine.loaddatabase("saveddatabase.xdplou59xturbomax96rp823max5"))))
-		search_entry_saved.bind("<Control-a>",lambda event: search_entry_saved.select_range(0,ctk.END))
+		shortcut(search_entry_saved)
 		#-------------
 		filter_screen_frame = filter_screen(inv_screen,width=120,height=180,update_func=update_filter,palet=palet)
 		#filter_screen_frame.place(x=215,y=423)

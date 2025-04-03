@@ -64,6 +64,7 @@ tabs = ctk.CTkTabview(root,border_width=0)
 tabs.pack(fill="x")
 tabs.add("Download Plugins")
 tabs.add("Manage Plugins")
+tabs.set("Manage Plugins")
 
 download_plugins_frame = tabs.tab("Download Plugins")
 Manage_Plugins_frame = tabs.tab("Manage Plugins")

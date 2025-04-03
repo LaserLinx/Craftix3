@@ -22,13 +22,13 @@ import tkcode
 import sys
 import customtkinter as ctk
 import threading
+import easygui
 import time
 import json
 from core import waste_of_time
 import datetime
 from core.tknodesystem import *
 import uuid
-
 
 text_color = colorschem.text_color
 ctk.set_appearance_mode(settings.config.get("mode"))
@@ -50,10 +50,12 @@ element_database = []
 running = True
 def root_stop():
 	global running
-	running = False
-	root.destroy()
-	root.quit()
-	exit(0)
+	c = easygui.ynbox("Are You Sure?")
+	if c:
+		running = False
+		root.destroy()
+		root.quit()
+		exit(0)
 
 def auto_close(event):
     """Automaticky uzavírá závorky a uvozovky v CTkTextbox."""
@@ -104,7 +106,7 @@ class TextBoxCommander:
 		search_entry.bind("<KeyRelease>", update_highlight)
 		search_entry.bind("<Return>", lambda e: search_window.destroy())
 		search_entry.bind("<Escape>", lambda e: search_window.destroy())
-		search_entry.bind("<Control-a>", lambda e: search_entry.select_range(0, ctk.END))
+		services.shortcut(search_entry)
 		search_entry.focus_set()
 		
 	def highlight_search(self, keyword, color):
@@ -230,6 +232,19 @@ tags_frame.place(x=10,y=1)
 tags_textbox=ctk.CTkTextbox(tags_frame,height=571,width=999)
 tags_textbox.pack(side="bottom",fill="both")
 
+
+class DragMode:
+	def __init__(self, widget):
+		self.widget = widget
+		widget.bind("<Button-1>", self.drag_start)
+		widget.bind("<B1-Motion>", self.drag_move)
+	def drag_start(self, event):
+		self.widget.startX = event.x
+		self.widget.startY = event.y
+	def drag_move(self, event):
+		x = self.widget.winfo_x() - self.widget.startX + event.x
+		y = self.widget.winfo_y() - self.widget.startY + event.y
+		self.widget.place(x=x, y=y)
 
 
 tags_edit_frame=ctk.CTkFrame(tab_menu,height=571,width=999)
@@ -2593,7 +2608,7 @@ project_selector_frame.place(y=610,x=10)
 
 project_selector_search = ctk.CTkEntry(project_selector_frame)
 project_selector_search.pack(pady=(2,2),padx=(2,2),fill="x")
-
+services.shortcut(project_selector_search)
 project_selector_list = tk.Listbox(project_selector_frame,width=20,height=10,background=dark_bg_color,foreground=text_color,highlightbackground=outline_collor,highlightcolor=outline_collor,highlightthickness=1,selectbackground=outline_collor,selectforeground=text_color)
 project_selector_list.pack(pady=(0,2),padx=(2,2))
 
@@ -2701,8 +2716,6 @@ recipe_name_entry.pack_propagate(0)
 
 type_labbel = ctk.CTkLabel(recipe_name_frame,text="Type: ")
 type_labbel.pack(fill="x",pady=4,padx=4)
-
-
 
 root_window.bind_all("<Control-s>",lambda event:save_data())
 root_window.bind_all("<Control-n>",lambda event:create_crafting())

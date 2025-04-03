@@ -59,7 +59,7 @@ ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("./assets/themes/default.json")
 root = ctk.CTk()
 root.geometry("500x300")
-
+root.title("Craftix3 PLuginManager v1.0")
 tabs = ctk.CTkTabview(root,border_width=0)
 tabs.pack(fill="x")
 tabs.add("Download Plugins")

@@ -184,10 +184,10 @@ def getall(database_path = database_path):
 			database = json.loads(f.read())
 		tags = database.get("tags")
 		database = database.get("database")
-		items = database.keys()
+		items = database
 		items_database = []
 		for item in items:
-			items_database.append(f"{database[item].get("mod")}:{item}")
+			items_database.append(f"{item.get("mod")}:{item.get("name")}")
 			
 		with open(os.path.join(database_path,"config.json")) as f:
 			tags = json.loads(f.read()).get("tags")
@@ -199,10 +199,10 @@ def getall(database_path = database_path):
 		database = {}
 		with open(os.path.join(database_path,"config.json")) as f:
 			database = json.loads(f.read()).get("database")
-		items = database.keys()
+		items = database
 		items_database = []
 		for item in items:
-			items_database.append(f"{database[item].get("mod")}:{item}")
+			items_database.append(f"{item.get("mod")}:{item.get("name")}")
 		tags = []
 		with open(os.path.join(database_path,"config.json")) as f:
 			tags = json.loads(f.read()).get("tags")
@@ -275,20 +275,22 @@ def search_path(name, database_path=database_path, tag=False):
 				results = os.path.join("temp",database[name].get("png"))
 				end_time = time.time()
 				search_time = (end_time - start_time) * 1000
-				print(f"Found: {results} in {search_time:.2f} ms")
+				#print(f"Found: {results} in {search_time:.2f} ms")
 				return results
 			except:
 				#print(f"No result found for {name}")
 				return None
 		else:
 			try:
-				results = os.path.join(database_path,"images",database[name].get("png"))
+				for item in database:
+					if item.get("name") == name:
+						results = os.path.join(database_path,"images",item.get("png"))
 				end_time = time.time()
 				search_time = (end_time - start_time) * 1000
 				#print(f"Found: {results} in {search_time:.2f} ms")
 				return results
 			except:
-				#print(f"No result found for {name}")
+				print(f"No result found for {name}")
 				return None
 
 

@@ -9,7 +9,7 @@ import sys
 import easygui
 from cryptography.fernet import Fernet
 from core.ui import colorschem
-
+ctk.set_appearance_mode("dark")
 outline_collor = colorschem.outline_collor
 dark_bg_color = colorschem.dark_bg_color
 light_bg_color = colorschem.light_bg_color
@@ -23,7 +23,7 @@ if not os.path.exists(os.path.join(DATABASE,"config.json")) or not os.path.exist
 		print("Starting Database Repair...")
 		img_paths = []
 		database_data = {}
-		database_data["database"] = {}
+		database_data["database"] = []
 		database_data["tags"] = []
 		database_mods = os.listdir(DATABASE)
 		print(f"adding: {database_mods}")
@@ -37,7 +37,7 @@ if not os.path.exists(os.path.join(DATABASE,"config.json")) or not os.path.exist
 						print(item)
 						name = item.replace(".png","")
 						print(name)
-						database_data["database"][name] = {"png": str(item),"mod": str(mod),"type": str(tp)}
+						database_data["database"].append({"name": str(name),"png": str(item),"mod": str(mod),"type": str(tp)})
 						img_paths.append(os.path.join(DATABASE,mod,tp,item))
 						print(img_paths)
 			

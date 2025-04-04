@@ -226,9 +226,9 @@ class GUItk(object):
 
         self.create_choicearea()
 
-        self.create_ok_button()
-
         self.create_cancel_button()
+
+        self.create_ok_button()
 
         self.create_special_buttons()
         
@@ -420,14 +420,11 @@ class GUItk(object):
 
     def create_ok_button(self):
 
-        self.buttonsFrame = tk.Frame(self.boxRoot,background="#222222")
-        self.buttonsFrame.pack(side=tk.TOP, expand=tk.YES, pady=0)
-
         # put the buttons in the self.buttonsFrame
         okButton = tk.Button(self.buttonsFrame, takefocus=tk.YES,
                              text="OK", height=1, width=6,background="#222222",highlightbackground="#00ffff",highlightcolor="#00ffff",activebackground="#111111",activeforeground="#ffffff",foreground="#ffffff")
         bindArrows(okButton)
-        okButton.pack(expand=tk.NO, side=tk.RIGHT, padx='2m', pady='1m',
+        okButton.pack(expand=tk.NO, side=tk.LEFT, padx='2m', pady='1m',
                       ipady="1m", ipadx="2m")
 
         # for the commandButton, bind activation events
@@ -436,10 +433,12 @@ class GUItk(object):
         okButton.bind("<space>", self.ok_pressed)
 
     def create_cancel_button(self):
+        self.buttonsFrame = tk.Frame(self.boxRoot,background="#222222")
+        self.buttonsFrame.pack(side=tk.TOP, expand=tk.YES, pady=0)
         cancelButton = tk.Button(self.buttonsFrame, takefocus=tk.YES,
                                  text="Cancel", height=1, width=6,background="#222222",highlightbackground="#00ffff",highlightcolor="#00ffff",activebackground="#111111",activeforeground="#ffffff",foreground="#ffffff")
         bindArrows(cancelButton)
-        cancelButton.pack(expand=tk.NO, side=tk.LEFT, padx='2m', pady='1m',
+        cancelButton.pack(expand=tk.NO, side=tk.RIGHT, padx='2m', pady='1m',
                           ipady="1m", ipadx="2m")
         cancelButton.bind("<Return>", self.cancel_pressed)
         cancelButton.bind("<Button-1>", self.cancel_pressed)

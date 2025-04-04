@@ -74,7 +74,7 @@ def open_project(project_name):
 	run()
 
 def delete_project(project_name):
-	result = messagebox.askyesno("Delete Project", f"Are you sure you want to delete the project '{project_name}'?")
+	result = easygui.ynbox("Delete Project", f"Are you sure you want to delete the project '{project_name}'?")
 	if result:
 		shutil.rmtree(os.path.join('workspaces', project_name))
 		load_projects()
@@ -89,6 +89,11 @@ def add_project():
 	project_type = easygui.choicebox("Choice Project Type",choices=["Local Project","Server Project"])
 	if project_type == "Local Project":
 		name = easygui.enterbox("Write Project Name","Create Project")
+		if name == None:
+			return
+		for i in [":","/","\\","?","<",">","|"," ","“"]:
+			if i in name:
+				name = name.replace(i,"_")
 		os.mkdir(os.path.join("./workspaces/",str(name)))
 		saved_database_name = os.path.join("./workspaces/",name,"database_saved.lsl")
 		save_path = os.path.join("./workspaces/",name,"save.craftix")

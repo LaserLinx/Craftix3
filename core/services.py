@@ -1045,7 +1045,7 @@ def update_parm_frame(editor,element,frame):
 						block_checkbox1.insert(0,crafting["sequence"][step].get("processtime"))
 					else:
 						clear_ctk_frames(frame)
-						editor.place(x=5,y=10)
+						
 						editor.insert(tk.END,json.dumps(crafting["sequence"].get(step),indent=4))
 		else:
 			print("[info] any item selected in arsenal menu skiping..")

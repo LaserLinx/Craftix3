@@ -2282,12 +2282,12 @@ def update_workspace(results = []):
 		# results
 		#open the box befotre eating pizza
 		main_frame = tk.Frame(root, background=dark_bg_color)
-		main_frame.place(x=201,y=237)
+		main_frame.place(x=203,y=237)
 		
 		canvas = tk.Canvas(main_frame,background=light_bg_color,highlightbackground=outline_collor,highlightcolor=outline_collor)
 		canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1, pady=(10, 10), padx=(10, 0))
 
-		scrollbar = tk.Scrollbar(main_frame, orient=tk.VERTICAL, command=canvas.yview)
+		scrollbar = tk.Scrollbar(main_frame, orient=tk.VERTICAL, command=canvas.yview,background="#000000",activebackground="#222222",highlightbackground="#00ffff",highlightcolor="#00ffff")
 		scrollbar.pack(side=tk.RIGHT, fill=tk.Y, pady=(10, 10), padx=(0, 10))
 
 		canvas.configure(yscrollcommand=scrollbar.set)

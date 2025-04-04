@@ -128,7 +128,14 @@ def add_project():
 			print(f"Error writing to Project.Active: {e}")
 	elif project_type == "Server Project":
 		name = easygui.enterbox("Write Project Name","Create Project")
+		if name == None:
+			return
+		for i in [":","/","\\","?","<",">","|"," ","“"]:
+			if i in name:
+				name = name.replace(i,"_")
 		url = easygui.enterbox("Write Server http api url")
+		if url == None:
+			return
 		os.mkdir(os.path.join("./workspaces/",str(name)))
 		project_server_data = os.path.join("./workspaces/",name,"client.json")
 		try:

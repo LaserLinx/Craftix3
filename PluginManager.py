@@ -3,6 +3,8 @@ import requests
 import customtkinter as ctk
 from tkinter import messagebox
 import shutil
+import sys
+import subprocess
 # GitHub repo settings
 OWNER = "LaserLinx"
 REPO = "CraftixPlugins"
@@ -43,7 +45,7 @@ def download_plugin(plugin_name):
 					if plugin_response.status_code == 200:
 						with open(filepath, "wb") as f:
 							f.write(plugin_response.content)
-						messagebox.showinfo("Success", f"Plugin {plugin_name} downloaded successfully!")
+						
 						return
 					else:
 						messagebox.showerror("Error", "Failed to download plugin")
@@ -163,6 +165,16 @@ def update_download():
 		ctk.CTkLabel(download_manager,text="Any Plugins Not Aviable.").pack(fill="both")
 
 update_download()
+
+def back():
+	try:
+		subprocess.Popen([sys.executable, "main.py"])
+	except Exception as e:
+		print(f"Error running main.py: {e}")
+	finally:
+		root.quit()
+		exit(0)
+ctk.CTkButton(root,text="Back ⮌",command=back).pack(side="bottom",padx=10,pady=1,fill="x")
 
 root.mainloop()
 

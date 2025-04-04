@@ -165,10 +165,12 @@ def load_item(palet):
 				item = "./3drender.png"
 
 		Image_ = Image.open(item)
-		I_preview_item = CTkImage(light_image=Image_, size=(180, 180))
+		resized_image = Image_.resize((180, 180), resample=0)  # nebo Image.NEAREST
+
+		I_preview_item = CTkImage(light_image=resized_image, size=(180, 180))
 
 		preview_item.configure(image=I_preview_item)
-		preview_item.image = I_preview_item 
+		preview_item.image = I_preview_item
 		
 		
 	else:

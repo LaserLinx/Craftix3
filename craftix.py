@@ -2263,9 +2263,9 @@ def update_workspace(results = []):
 		usage_arsenal_menu.bind("<<ListboxSelect>>",lambda event: services.update_parm_frame(parm_editor,usage_arsenal_menu,parm_frame))
 		usage_arsenal_menu.bind("<Button-3>",lambda event: services.arsenal_remove(usage_arsenal_menu))
 
-		up = ctk.CTkButton(root,width=50,text="▲",command=lambda: services.sequence_as_move_up(usage_arsenal_menu))
+		up = ctk.CTkButton(root,width=50,text=f"\U000025B2",command=lambda: services.sequence_as_move_up(usage_arsenal_menu))
 		up.place(x=560,y=175)
-		down = ctk.CTkButton(root,width=50,text="⯆",command=lambda: services.sequence_as_move_down(usage_arsenal_menu))
+		down = ctk.CTkButton(root,width=50,text=f"\U000025BC",command=lambda: services.sequence_as_move_down(usage_arsenal_menu))
 		down.place(x=560,y=205)
 		loop_input=tk.Entry(root,width=5,background=light_bg_color,borderwidth=0,highlightthickness=1,highlightbackground=outline_collor,highlightcolor=outline_collor,foreground=text_color)
 		loop_input.place(x=505,y=213)

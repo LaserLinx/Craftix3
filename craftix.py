@@ -2287,7 +2287,7 @@ def update_workspace(results = []):
 		canvas = tk.Canvas(main_frame,background=light_bg_color,highlightbackground=outline_collor,highlightcolor=outline_collor)
 		canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1, pady=(10, 10), padx=(10, 0))
 
-		scrollbar = tk.Scrollbar(main_frame, orient=tk.VERTICAL, command=canvas.yview,background="#000000",activebackground="#222222",highlightbackground="#00ffff",highlightcolor="#00ffff")
+		scrollbar = tk.Scrollbar(main_frame, orient=tk.VERTICAL, command=canvas.yview,background="#222222",activebackground="#222222",highlightbackground="#00ffff",highlightcolor="#00ffff")
 		scrollbar.pack(side=tk.RIGHT, fill=tk.Y, pady=(10, 10), padx=(0, 10))
 
 		canvas.configure(yscrollcommand=scrollbar.set)

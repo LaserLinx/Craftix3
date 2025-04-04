@@ -166,6 +166,7 @@ def run():
 		print(f"Error running main.py: {e}")
 	finally:
 		root.quit()
+		exit(0)
 		
 def run_plugin_manager():
 	try:
@@ -174,6 +175,7 @@ def run_plugin_manager():
 		print(f"Error running main.py: {e}")
 	finally:
 		root.quit()
+		exit(0)
 
 
 ctk.set_default_color_theme("./assets/themes/default.json")

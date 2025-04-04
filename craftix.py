@@ -22,6 +22,7 @@ import tkcode
 import sys
 import customtkinter as ctk
 import threading
+import subprocess
 import easygui
 import time
 import json
@@ -52,6 +53,20 @@ def root_stop():
 	global running
 	c = easygui.ynbox("Are You Sure?")
 	if c:
+		running = False
+		root.destroy()
+		root.quit()
+		exit(0)
+
+
+def tolouncher():
+	global running
+	try:
+		subprocess.Popen([sys.executable, "main.py"])
+		print("starting...")
+	except Exception as e:
+		print(f"Error running main.py: {e}")
+	finally:
 		running = False
 		root.destroy()
 		root.quit()
@@ -2681,7 +2696,7 @@ root_menu_file.add_command(label="Remove Crafting",foreground=text_color,command
 root_menu_file.add_command(label="Rename Crafting",foreground=text_color,command=rename_crafting)
 root_menu_file.add_command(label="Compile",foreground=text_color,command=lambda: services.export())
 root_menu_file.add_command(label="Update Database",foreground=text_color,command=update_database)
-root_menu_file.add_command(label="Exit",foreground=text_color,command=root_stop)
+root_menu_file.add_command(label="Exit To Louncher",foreground=text_color,command=tolouncher)
 
 def json_auti_correct_toogle():
 	global auto_indent_correct

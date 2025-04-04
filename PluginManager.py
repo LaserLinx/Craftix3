@@ -174,7 +174,7 @@ def back():
 	finally:
 		root.quit()
 		exit(0)
-ctk.CTkButton(root,text="Back ⮌",command=back).pack(side="bottom",padx=10,pady=1,fill="x")
+ctk.CTkButton(root,text="Back",command=back).pack(side="bottom",padx=10,pady=1,fill="x")
 
 root.mainloop()
 

@@ -19,6 +19,33 @@ DISABLED_DIR = "disabled_plugins"
 os.makedirs(PLUGINS_DIR, exist_ok=True)
 os.makedirs(DISABLED_DIR, exist_ok=True)
 
+
+class MouseWheelFixer:
+	def __init__(self, scrollable_frame):
+		self.scrollable_frame = scrollable_frame
+		self.canvas = scrollable_frame._parent_canvas
+
+		# Povol focus, jinak se kolečko nebude chytat
+		self.canvas.bind("<Enter>", self._bind_mousewheel)
+		self.canvas.bind("<Leave>", self._unbind_mousewheel)
+
+	def _bind_mousewheel(self, event):
+		self.canvas.bind_all("<MouseWheel>", self._on_mousewheel_windows)  # Windows/macOS
+		self.canvas.bind_all("<Button-4>", self._on_mousewheel_linux)	  # Linux scroll up
+		self.canvas.bind_all("<Button-5>", self._on_mousewheel_linux)	  # Linux scroll down
+
+	def _unbind_mousewheel(self, event):
+		self.canvas.unbind_all("<MouseWheel>")
+		self.canvas.unbind_all("<Button-4>")
+		self.canvas.unbind_all("<Button-5>")
+
+	def _on_mousewheel_windows(self, event):
+		self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
+	def _on_mousewheel_linux(self, event):
+		direction = -1 if event.num == 4 else 1
+		self.canvas.yview_scroll(direction, "units")
+
 def fetch_plugins():
 	try:
 		response = requests.get(GITHUB_API_URL)
@@ -74,7 +101,7 @@ Manage_Plugins_frame = tabs.tab("Manage Plugins")
 #Manage Plugins
 Manager = ctk.CTkScrollableFrame(Manage_Plugins_frame)
 Manager.pack(fill="both")
-
+MouseWheelFixer(Manager)
 
 class plugin(ctk.CTkFrame):
 	def __init__(self,master,name,activate):
@@ -136,7 +163,7 @@ update_Manager()
 #download plugins
 download_manager = ctk.CTkScrollableFrame(download_plugins_frame)
 download_manager.pack(fill="both")
-
+MouseWheelFixer(download_manager)
 class plugin_download(ctk.CTkFrame):
 	def __init__(self,master,name):
 		super().__init__(master)
@@ -163,6 +190,7 @@ def update_download():
 			plugin_download(download_manager,pl).pack(pady=1,padx=(1,8),fill="x")
 	if len(download_manager.winfo_children()) == 0:
 		ctk.CTkLabel(download_manager,text="Any Plugins Not Aviable.").pack(fill="both")
+
 
 update_download()
 

@@ -14,6 +14,33 @@ light_bg_color = colorschem.light_bg_color
 I_slot00=ImageTk.PhotoImage(Image.open("assets/textures/slot00.png").resize((54,54),resample=0))
 
 
+class MouseWheelFixer:
+	def __init__(self, scrollable_frame):
+		self.scrollable_frame = scrollable_frame
+		self.canvas = scrollable_frame._parent_canvas
+
+		# Povol focus, jinak se kolečko nebude chytat
+		self.canvas.bind("<Enter>", self._bind_mousewheel)
+		self.canvas.bind("<Leave>", self._unbind_mousewheel)
+
+	def _bind_mousewheel(self, event):
+		self.canvas.bind_all("<MouseWheel>", self._on_mousewheel_windows)  # Windows/macOS
+		self.canvas.bind_all("<Button-4>", self._on_mousewheel_linux)	  # Linux scroll up
+		self.canvas.bind_all("<Button-5>", self._on_mousewheel_linux)	  # Linux scroll down
+
+	def _unbind_mousewheel(self, event):
+		self.canvas.unbind_all("<MouseWheel>")
+		self.canvas.unbind_all("<Button-4>")
+		self.canvas.unbind_all("<Button-5>")
+
+	def _on_mousewheel_windows(self, event):
+		self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
+	def _on_mousewheel_linux(self, event):
+		direction = -1 if event.num == 4 else 1
+		self.canvas.yview_scroll(direction, "units")
+
+
 def error(i):
 	print(f"[error]: {i}")
 def info(i):
@@ -187,6 +214,7 @@ class ResultsInput(ctk.CTkFrame):  # Hlavní rám
 
 		self.scrollable_frame = ctk.CTkScrollableFrame(self.parent_frame,border_width=0,width=650)  # ScrollableFrame
 		self.scrollable_frame.pack(fill="both", expand=True)
+		MouseWheelFixer(self.scrollable_frame)
 		AddElements(self) 
 		AddElements(self.parent_frame)  # Přidává prvky do parent_frame
 

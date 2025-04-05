@@ -17,6 +17,33 @@ text_color = colorschem.text_color
 
 DATABASE = "./database"
 
+class MouseWheelFixer:
+	def __init__(self, scrollable_frame):
+		self.scrollable_frame = scrollable_frame
+		self.canvas = scrollable_frame._parent_canvas
+
+		# Povol focus, jinak se kolečko nebude chytat
+		self.canvas.bind("<Enter>", self._bind_mousewheel)
+		self.canvas.bind("<Leave>", self._unbind_mousewheel)
+
+	def _bind_mousewheel(self, event):
+		self.canvas.bind_all("<MouseWheel>", self._on_mousewheel_windows)  # Windows/macOS
+		self.canvas.bind_all("<Button-4>", self._on_mousewheel_linux)	  # Linux scroll up
+		self.canvas.bind_all("<Button-5>", self._on_mousewheel_linux)	  # Linux scroll down
+
+	def _unbind_mousewheel(self, event):
+		self.canvas.unbind_all("<MouseWheel>")
+		self.canvas.unbind_all("<Button-4>")
+		self.canvas.unbind_all("<Button-5>")
+
+	def _on_mousewheel_windows(self, event):
+		self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
+	def _on_mousewheel_linux(self, event):
+		direction = -1 if event.num == 4 else 1
+		self.canvas.yview_scroll(direction, "units")
+
+
 if not os.path.exists(os.path.join(DATABASE,"config.json")) or not os.path.exists(os.path.join(DATABASE,"images")):
 	choice = easygui.buttonbox("ERROR\nInvalid Database Format","Databse Error",choices=["Exit","Repair"])
 	if choice == "Repair":
@@ -198,6 +225,7 @@ ctk.CTkButton(root,text="Open PluginManager",command=run_plugin_manager).pack(si
 
 project_frame = ctk.CTkScrollableFrame(root)
 project_frame.pack(fill="both",side="top",expand=True)
+MouseWheelFixer(project_frame)
 add_project_button = ctk.CTkButton(root, text="Add Project", command=add_project)
 add_project_button.pack(pady=10,side="bottom",fill="x")
 

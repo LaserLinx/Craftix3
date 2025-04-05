@@ -322,6 +322,95 @@ class ResultsInput(ctk.CTkFrame):  # Hlavní rám
 			pass
 
 
+class InfinytyItemInput(ctk.CTkFrame):  # Hlavní rám
+	def __init__(self, id, x, y):
+		super().__init__(master=GetPlayground())  
+		self.place(x=x, y=y)
+
+		self.parent_frame = ctk.CTkFrame(self)  # Vnější rám
+		self.parent_frame.pack(fill="both", expand=True, padx=5, pady=5)
+
+		self.scrollable_frame = ctk.CTkScrollableFrame(self.parent_frame,border_width=0,width=255)  # ScrollableFrame
+		self.scrollable_frame.pack(fill="both", expand=True)
+		MouseWheelFixer(self.scrollable_frame)
+		AddElements(self) 
+		AddElements(self.parent_frame)  # Přidává prvky do parent_frame
+
+		self.id = id
+		self.update_fn()
+
+	def add(self):
+		self.results = services.crafting.get(self.id)
+		self.results.append({"item": ""})
+		services.update_crafting_key(self.id, self.results)
+		self.update_fn()
+
+	def update_slot(self, button, index):
+		try:
+			self.results = services.crafting.get(self.id)
+			selected_minecraft_item = services.get_selected_item()
+			self.results[index]["item"] = selected_minecraft_item
+			services.update_crafting_key(self.id, self.results)
+			selected_item = services.remove_mod(selected_minecraft_item)
+			tag = selected_minecraft_item.startswith("tag:")
+			preview_image_button = ImageTk.PhotoImage(
+				Image.open(db_engine.search_path(selected_item, tag=tag)).resize((54, 54), resample=0)
+			)
+			button.config(image=preview_image_button)
+			button.image = preview_image_button
+		except:
+			button.config(image=I_slot00)
+			button.image = I_slot00
+
+	def update_fn(self):
+		for element in self.scrollable_frame.winfo_children():
+			element.destroy()
+
+		self.results = services.crafting.get(self.id)
+		info(self.results)
+		self.loop = 0
+
+		for res in self.results:
+			frame = ctk.CTkFrame(self.scrollable_frame)  # Vkládání do scrollable_frame
+			frame.pack(fill="x", side="top", pady=5, padx=5)
+
+			slot = tk.Button(
+				frame, image=I_slot00, borderwidth=0, highlightthickness=1, 
+				highlightbackground=outline_collor, highlightcolor=outline_collor, 
+				background=light_bg_color
+			)
+			slot.pack(side="left", padx=5, pady=5)
+			slot.config(command=lambda b=slot, l=self.loop: self.update_slot(b, l))
+
+			try:
+				selected_minecraft_item = res.get("item")
+				selected_item = services.remove_mod(selected_minecraft_item)
+				tag = selected_minecraft_item.startswith("tag:")
+				preview_image_button = ImageTk.PhotoImage(
+					Image.open(db_engine.search_path(selected_item, tag=tag)).resize((54, 54), resample=0)
+				)
+				slot.config(image=preview_image_button)
+				slot.image = preview_image_button
+			except:
+				slot.config(image=I_slot00)
+				slot.image = I_slot00
+
+			del_button = ctk.CTkButton(frame, text="Delete", command=lambda r=res: self.delete(r))
+			del_button.pack(side="left", pady=5, padx=5)
+
+			self.loop += 1
+		
+		self.add_button = ctk.CTkButton(self.scrollable_frame, text="Add", command=self.add)
+		self.add_button.pack(side="top", fill="x", padx=5, pady=5)
+
+	def delete(self, r):
+		self.results = services.crafting.get(self.id)
+		self.results.remove(r)
+		services.update_crafting_key(self.id, self.results)
+		self.update_fn()
+
+
+
 class FileAccessManager():
 	def __init__(self,file,empty={}):
 		self.empty = empty

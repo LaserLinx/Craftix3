@@ -54,8 +54,9 @@ def root_stop():
 	c = easygui.ynbox("Are You Sure?")
 	if c:
 		running = False
-		root.destroy()
-		root.quit()
+		root_window.after(100,root_window.destroy)
+		root_window.destroy()
+		root_window.quit()
 		exit(0)
 
 
@@ -313,13 +314,14 @@ def update_tag_database():
 		if not i == "":
 			tags.append(i)
 	db_engine.update_tags(tags=tags)
-	database = db_engine.getall()
-	
-	services.update_main_palet(database)
+	update_database()
 
 def update_database():
 	database = db_engine.getall()
-	services.update_palet(services.palet,database)
+	if services.search_entry.get() != "":
+		services.update_palet(services.palet,services.search(str(services.search_entry.get()),database))
+	else:
+		services.update_palet(services.palet,database)
 
 hide_c_frame=ctk.CTkFrame(tab_menu,height=571,width=999)
 hide_c_frame.place(x=10,y=1)
@@ -361,17 +363,17 @@ def update_hide_c():
 
 remove_text_box_commander = TextBoxCommander(remove_textbox)
 remove_text_box_commander.add_mark_keywords("#00ffbb",[";"])
-remove_text_box_commander.add_mark_keywords("#aa00cc",[":","/"])
+remove_text_box_commander.add_mark_keywords("#60C447",[":","/"])
 remove_text_box_commander.add_mark_keywords("#ff0000",["*",",","=",'"',"'","."])
 
 tags_text_box_commander = TextBoxCommander(tags_textbox)
 tags_text_box_commander.add_mark_keywords("#00ffbb",[";"])
-tags_text_box_commander.add_mark_keywords("#aa00cc",[":","/"])
+tags_text_box_commander.add_mark_keywords("#60C447",[":","/"])
 tags_text_box_commander.add_mark_keywords("#ff0000",["*",",","=",'"',"'",".png","."])
 
 hide_c_text_box_commander = TextBoxCommander(hide_c_textbox)
 hide_c_text_box_commander.add_mark_keywords("#00ffbb",[";"])
-hide_c_text_box_commander.add_mark_keywords("#aa00cc",[":","/"])
+hide_c_text_box_commander.add_mark_keywords("#60C447",[":","/"])
 hide_c_text_box_commander.add_mark_keywords("#ff0000",["*",",","=",'"',"'","."])
 
 
@@ -977,7 +979,7 @@ def update_workspace(results = []):
 		update_pressing_result(results)
 	if modules == "stonecutting":
 		module04_slot00=tk.Button(root,image=I_slot00,borderwidth=0,highlightthickness=1,command=lambda:services.create_crafting(module04_slot00,"in"),highlightbackground=outline_collor,highlightcolor=outline_collor,background=light_bg_color)
-		module04_slot00.place(x=510,y=310)
+		module04_slot00.place(x=510,y=254)
 
 		module04_slot01=tk.Button(root,image=I_slot00,borderwidth=0,highlightthickness=1,command=lambda:services.create_crafting(module04_slot01,"result"),highlightbackground=outline_collor,highlightcolor=outline_collor,background=light_bg_color)
 		module04_slot01.place(x=640,y=254)

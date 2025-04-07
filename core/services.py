@@ -902,6 +902,8 @@ def export(gens):
 
 def remove_crfating(name):
 	db_engine.remove_crafting(name)
+	global crafting
+	crafting = {}
 
 
 buttons_element = []
@@ -1093,7 +1095,7 @@ def save_crafting(entry=None):
 		if not name == None:
 			db_engine.save_crafting(crafting,name)
 		else:
-			print("save_error")
+			pass
 
 def load_crafting(load_item,buttons,recipe_name_entry):
 	global crafting, buttons_element

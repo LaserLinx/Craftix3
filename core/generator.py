@@ -511,7 +511,7 @@ def generate_create_sequence_assembly(data):
 			rec["type"] = "create:deploying"
 			rec["ingredients"] = [{"item": data.get("transitionalItem")},{"item": el.get("subitem")}]
 			rec["results"] = [{"item": data.get("transitionalItem")}]
-			if el.get("ussage") == False:
+			if el.get("ussage") == True:
 				rec["keepHeldItem"] = False
 			else:
 				rec["keepHeldItem"] = True

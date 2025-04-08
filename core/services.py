@@ -372,6 +372,7 @@ def create_name(name):
 def get_selected_item():
 	global crafting
 	global palet
+	global latest_item
 	global saved_palet
 	try:
 		selection = palet.curselection()
@@ -379,6 +380,7 @@ def get_selected_item():
 			index = selection[0]
 			selected_item = palet.get(index)
 			return selected_item
+		
 
 		else:
 			selection = saved_palet.curselection()
@@ -387,8 +389,8 @@ def get_selected_item():
 				selected_item = saved_palet.get(index)
 				return selected_item
 			else:
-				selected_item = None
-				return selected_item
+				
+				return latest_item
 	except:
 		pass
 
@@ -919,7 +921,7 @@ def arsenal_add(arsenal,seq):
 			data_templates = {
 				"pressing": {"type": "pressing"},
 				"cutting": {"type": "cutting","processtime": 1},
-				"deployng": {"type": "deployng","subitem": "","ussage": False},
+				"deployng": {"type": "deployng","subitem": "","ussage": True},
 				"spouting": {"type": "spouting","fluid": "","amount": 1000}
 			}
 			crafting["sequence"][iid] = data_templates.get(selected_item)
@@ -2285,6 +2287,11 @@ def update_saved_palet_database_cl():
 			update_palet(saved_palet,saved_palet_database)
 	except:
 		pass
+
+def cc(v):
+	global latest_item
+	latest_item = None
+
 def inv_open(root):
 	global search_entry_saved,search_entry
 	global palet,saved_palet
@@ -2292,18 +2299,21 @@ def inv_open(root):
 	global preview_item
 	global inv_screen
 	global saved_palet_database
-	global I_slot00
+	global I_slot00,latest_item
 
 	if inv_screen is None:
 		inv_screen=ctk.CTkFrame(root,height=600,width=700)
 		inv_screen.place(y=1,x=1020)
+		
 		saved_palet_database = db_engine.loaddatabase()
 		I_slot00=ImageTk.PhotoImage(Image.open("assets/textures/slot00.png").resize((54,54),resample=0))
-
+		inv_screen.bind("<Button-1>",cc)
 		def lose_focus(event):
+			global latest_item
 			if not isinstance(event.widget,(tk.Entry, tk.Listbox)):
 				inv_screen.focus_set()
 				palet.selection_clear(0, tk.END)
+				latest_item = None
 				saved_palet.selection_clear(0, tk.END)
 				none_image = CTkImage(light_image=Image.open("./assets/textures/none.png"), size=(180, 180))
 				preview_item.configure(image=none_image)

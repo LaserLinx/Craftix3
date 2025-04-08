@@ -6,6 +6,7 @@ from tkinter import messagebox, ttk
 import subprocess
 import json
 import sys
+import uuid
 import easygui
 from cryptography.fernet import Fernet
 from core.ui import colorschem
@@ -64,8 +65,10 @@ if not os.path.exists(os.path.join(DATABASE,"config.json")) or not os.path.exist
 						print(item)
 						name = item.replace(".png","")
 						print(name)
-						database_data["database"].append({"name": str(name),"png": str(item),"mod": str(mod),"type": str(tp)})
-						img_paths.append(os.path.join(DATABASE,mod,tp,item))
+						png_name = str(uuid.uuid4())
+						database_data["database"].append({"name": str(name),"png": str(png_name),"mod": str(mod),"type": str(tp)})
+						os.rename(os.path.join(DATABASE,mod,tp,item),os.path.join(DATABASE,mod,tp,png_name))
+						img_paths.append(os.path.join(DATABASE,mod,tp,png_name))
 						print(img_paths)
 			
 		with open(os.path.join(DATABASE,"config.json"),"w") as f:
@@ -90,6 +93,8 @@ if not os.path.exists(os.path.join(DATABASE,"config.json")) or not os.path.exist
 		easygui.msgbox("Database repair is Done!")
 	else:
 		exit(0)
+
+
 
 def open_project(project_name):
 	try:

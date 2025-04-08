@@ -2744,8 +2744,6 @@ root_menu.add_cascade(label="File",foreground=text_color,menu=root_menu_file)
 
 #system plugins
 
-
-
 #plugins
 PLUGINS_DIR = "plugins"
 

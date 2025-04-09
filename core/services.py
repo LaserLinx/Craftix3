@@ -2288,6 +2288,10 @@ def update_saved_palet_database_cl():
 	except:
 		pass
 
+def set_c(data):
+	global crafting
+	crafting = data
+
 def cc(v):
 	global latest_item
 	latest_item = None

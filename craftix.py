@@ -2686,8 +2686,10 @@ def save_data():
 def rename_crafting():
 	def_name = recipe_name_entry.get()
 	name = easydialog.editbox("Rename Crafting",editable_text=str(def_name))
+	temp_name = services.crafting
 	services.create_name(str(name))
 	services.remove_crfating(str(def_name))
+	services.set_c(temp_name)
 	save_data()
 	update_selector_list()
 

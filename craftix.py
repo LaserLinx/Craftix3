@@ -515,21 +515,13 @@ DataAPI.set_aitelf(add_into_element_database)
 
 playgrounds = {}
 
+
+
+
 def update_workspace(results = []):
 	global modules, element_database, caption_labels, playgrounds
 	
-	for element in element_database:
-		try:
-			element.destroy()
-			element.master.update()
-		except:
-			pass
-	
-	for element in caption_labels:
-		try:
-			element.destroy()
-		except:
-			pass
+	clear_workspace()
 	
 	if modules == "mechanical_crafting":#mechanical_crafting
 
@@ -2717,17 +2709,26 @@ root_menu_quick_tools.add_command(label="Correct Json Tags",command=lambda: json
 
 
 def clear_workspace():
-
-	for element in element_database:
+	global root
+	for widget in root.winfo_children():
 		try:
-			element.destroy()
+			if isinstance(widget,ctk.CTkFrame):
+				try:
+					if widget.keep == True:
+						pass
+					else:
+						widget.destroy()
+				except:
+					widget.destroy()
+			else:
+				widget.destroy()
 		except:
 			pass
 
 
 
-
 recipe_name_frame = ctk.CTkFrame(root,width=190,height=555)
+recipe_name_frame.keep = True
 recipe_name_frame.pack(fill="y",anchor="e",side="left",pady=4,padx=4)
 recipe_name_entry = ctk.CTkEntry(recipe_name_frame)
 

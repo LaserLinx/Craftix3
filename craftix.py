@@ -2653,7 +2653,7 @@ def update_selector_list():
 
 update_selector_list()
 
-root_menu=tk.Menu(root)
+root_menu=tk.Menu(root_window)
 root_window.config(menu=root_menu)
 root_menu.config(background=light_bg_color,activebackground=outline_collor)
 

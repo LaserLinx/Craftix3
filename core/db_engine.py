@@ -283,7 +283,7 @@ def search_path(name, database_path=database_path, tag=False):
 		else:
 			try:
 				for item in database:
-					if item.get("name") == name:
+					if item.get("name_with_mod") == name:
 						results = os.path.join(database_path,"images",item.get("png"))
 				end_time = time.time()
 				search_time = (end_time - start_time) * 1000

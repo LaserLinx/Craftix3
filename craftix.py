@@ -7,7 +7,6 @@ from core import centerlib
 import core.db_engine as db_engine
 from tkinter import ttk
 import importlib
-import requests
 import core.ui.settings as settings
 import os
 from tkinter import font
@@ -17,7 +16,6 @@ from core.ui import colorschem
 from core import DataAPI
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name
-from pygments.formatters import HtmlFormatter
 import tkcode
 import sys
 import customtkinter as ctk
@@ -26,7 +24,6 @@ import subprocess
 import easygui
 import time
 import json
-from core import waste_of_time
 import datetime
 from core.tknodesystem import *
 import uuid
@@ -84,7 +81,7 @@ def auto_close(event):
         textbox.insert("insert", pairs[text])
         textbox.mark_set("insert", "insert-1c")
 
-auto_indent_correct = True
+auto_indent_correct = False
 auto_indent_correct_m = ""
 def json_auto_indent_correct(textbox,run=False):
 	global auto_indent_correct,auto_indent_correct_m
@@ -247,7 +244,7 @@ tags_frame.place(x=10,y=1)
 
 tags_textbox=ctk.CTkTextbox(tags_frame,height=571,width=999)
 tags_textbox.pack(side="bottom",fill="both")
-
+tags_textbox.bind("<KeyRelease>", lambda v: update_tag_database())
 
 class DragMode:
 	def __init__(self, widget):
@@ -2671,7 +2668,7 @@ def remove_crafting():
 
 def save_data():
 	save_tags_edits()
-	update_tag_database()
+	
 	update_removed_ids()
 	update_hide_c()
 	services.save_crafting()

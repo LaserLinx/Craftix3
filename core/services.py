@@ -142,17 +142,6 @@ def load_item(palet):
 		index = selection[0]
 		selected_item = palet.get(index)
 		minecraft_selected_item = selected_item
-		if ":" in selected_item:
-			remove_index = ""
-			
-			for index in selected_item:
-				if not index == ":":
-					remove_index = str(remove_index) + str(index)
-				else:
-					remove_index = str(remove_index) + ":"
-					break
-
-			selected_item = selected_item.replace(remove_index,"")
 		tag = False
 		if str(minecraft_selected_item).startswith("tag:"):
 			tag = True
@@ -396,6 +385,7 @@ def get_selected_item():
 
 
 def remove_mod(selected_item):
+	return str(selected_item)
 	if ":" in selected_item:
 		remove_index = ""
 					
@@ -2348,7 +2338,7 @@ def inv_open(root):
 		update_palet(saved_palet,saved_palet_database)
 		search_entry_saved = ctk.CTkEntry(inv_screen,height=21,width=306)
 		search_entry_saved.place(x=8,y=2)
-		search_entry_saved.bind("<KeyRelease>", lambda event:update_palet(saved_palet,search(str(search_entry_saved.get()),database=db_engine.loaddatabase("saveddatabase.xdplou59xturbomax96rp823max5"))))
+		search_entry_saved.bind("<KeyRelease>", lambda event:update_palet(saved_palet,search(str(search_entry_saved.get()),database=db_engine.loaddatabase(db_engine.saved_database_name))))
 		shortcut(search_entry_saved)
 		#-------------
 		filter_screen_frame = filter_screen(inv_screen,width=120,height=180,update_func=update_filter,palet=palet)

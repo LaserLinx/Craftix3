@@ -396,7 +396,7 @@ DataAPI.set_get_global_func(get_widget_by_name)
 
 I_arrow00=ImageTk.PhotoImage(Image.open("./assets/textures/arrow00.png"))
 I_slot00=ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
-def redirect_console_to_textbox(text_widget, log_file_path, highlight_green=None, highlight_red=None, highlight_yellow=None):
+def redirect_console_to_logs(text_widget, log_file_path, highlight_green=None, highlight_red=None, highlight_yellow=None):
     if highlight_green is None:
         highlight_green = ["[ok]:", "initialized", "success", "running", "accepted", "[Success] all systems go"]
     if highlight_red is None:
@@ -408,27 +408,8 @@ def redirect_console_to_textbox(text_widget, log_file_path, highlight_green=None
     os.makedirs(os.path.dirname(log_file_path), exist_ok=True)
 
     def write_to_textbox(message):
-        text_widget.configure(state='normal')
+        
 
-        # Přidání textu do textového widgetu
-        start_index = text_widget.index('end-1c')
-        text_widget.insert('end', message + "\n")
-        end_index = text_widget.index('end-1c')
-
-        # Zvýraznění klíčových slov
-        for word in highlight_green:
-            highlight_word(text_widget, word, start_index, end_index, "#00ff00")
-
-        for word in highlight_red:
-            highlight_word(text_widget, word, start_index, end_index, "#ff0000")
-
-        for word in highlight_yellow:
-            highlight_word(text_widget, word, start_index, end_index, "#ffff00")
-
-        text_widget.see('end')  # Automatické scrollování na konec
-        text_widget.configure(state='disabled')
-
-        # Zápis do souboru s časovým razítkem
         with open(log_file_path, "a", encoding="utf-8") as log_file:
             timestamp = datetime.datetime.now().strftime("[%Y-%m-%d %H:%M:%S] ")
             log_file.write(timestamp + message + "\n")
@@ -452,19 +433,15 @@ def redirect_console_to_textbox(text_widget, log_file_path, highlight_green=None
     return ConsoleStream()
 
 def create_debug_window(root=None, text_box_height=240, text_box_width=322, bg_color="black", fg_color="white"):
-    # Logovací soubor
     log_file_path = "logs/app.log"
 
-    # Vytvoření Text widgetu
     text_box = ctk.CTkTextbox(root, wrap='word', height=text_box_height, width=text_box_width)
     text_box.pack(fill='both', expand=True)
     text_box.configure(state='disabled')
 
-    # Přesměrování konzolového výstupu + logování
-    sys.stdout = redirect_console_to_textbox(text_box, log_file_path)
-    sys.stderr = redirect_console_to_textbox(text_box, log_file_path)
+    sys.stdout = redirect_console_to_logs(text_box, log_file_path)
+    sys.stderr = redirect_console_to_logs(text_box, log_file_path)
 
-    # Vytvoření vlákna pro ukázkový výstup
     def generate_debug_output():
         print("Debug Window initialized!")
 
@@ -475,9 +452,6 @@ debug_frame = ctk.CTkFrame(root_window)
 debug_frame.place(x=1394, y=603)
 
 create_debug_window(debug_frame, fg_color="white", bg_color="black")
-#waste_of_time.start_printing()
-
-
 
 def valide_input(value):
 	return value.isdigit() or value==""
@@ -489,18 +463,6 @@ def lose_focus(event):
 	root.focus_set()
 root.bind("<Button-1>",lose_focus)
 
-def on_click(event):
-	if event.num == 1:
-		print("Levé tlačítko")
-	elif event.num == 2:
-		print("Středové tlačítko")
-	elif event.num == 3:
-		print("Pravé tlačítko")
-	else:
-		print("Neznámé tlačítko")
-	#module01_slot01.bind("<Button-1>",on_click)
-	#module01_slot01.bind("<Button-2>",on_click)
-	#module01_slot01.bind("<Button-3>",on_click)
 
 modules = ""
 
@@ -2543,7 +2505,8 @@ def create_crafting():
 		name = easydialog.enterbox("Enter Name","Enter Name")
 		if name == "":
 			name = str(uuid.uuid4())
-		services.create_crafting_palet(type,name,load_crafting,update_selector_list)	
+		services.create_crafting_palet(type,name,load_crafting,update_selector_list)
+	update_search(None)
 
 #TODO: adding craftings
 
@@ -2615,7 +2578,7 @@ project_selector_frame.place(y=610,x=10)
 project_selector_search = ctk.CTkEntry(project_selector_frame)
 project_selector_search.pack(pady=(2,2),padx=(2,2),fill="x")
 services.shortcut(project_selector_search)
-project_selector_list = tk.Listbox(project_selector_frame,width=20,height=10,background=dark_bg_color,foreground=text_color,highlightbackground=outline_collor,highlightcolor=outline_collor,highlightthickness=1,selectbackground=outline_collor,selectforeground=text_color)
+project_selector_list = tk.Listbox(project_selector_frame,width=20,height=10,background=dark_bg_color,foreground=text_color,highlightbackground=outline_collor,highlightcolor=outline_collor,highlightthickness=1,selectbackground=outline_collor,selectforeground="#000000")
 project_selector_list.pack(pady=(0,2),padx=(2,2))
 
 def load_selected_crafting(event):
@@ -2647,7 +2610,7 @@ def update_selector_list():
 	project_selector_list.delete(0,tk.END)
 	for i in data:
 		project_selector_list.insert(tk.END,i)
-
+	update_search(None)
 update_selector_list()
 
 root_menu=tk.Menu(root_window)
@@ -2683,13 +2646,26 @@ def rename_crafting():
 	update_selector_list()
 
 #---
-root_menu_file.add_command(label="Save",foreground=text_color,command=save_data)
-root_menu_file.add_command(label="New...",foreground=text_color,command=create_crafting)
-root_menu_file.add_command(label="Remove Crafting",foreground=text_color,command=remove_crafting)
-root_menu_file.add_command(label="Rename Crafting",foreground=text_color,command=rename_crafting)
-root_menu_file.add_command(label="Compile",foreground=text_color,command=lambda: services.export())
-root_menu_file.add_command(label="Update Database",foreground=text_color,command=update_database)
-root_menu_file.add_command(label="Exit To Louncher",foreground=text_color,command=tolouncher)
+root_menu_file.add_command(label=f"Save{"\U00002000"*13}(Ctrl+S)",foreground=text_color,command=save_data)
+root_menu_file.add_command(label=f"New{"\U00002000"*13}(Ctrl+N)",foreground=text_color,command=create_crafting)
+root_menu_file.add_command(label=f"Remove Crafting{"\U00002000"*2}(Ctrl+Del)",foreground=text_color,command=remove_crafting)
+root_menu_file.add_command(label=f"Rename Crafting{"\U00002000"*2}(Ctrl+F2)",foreground=text_color,command=rename_crafting)
+root_menu_file.add_command(label=f"Compile{"\U00002000"*10}(Ctrl+Q)",foreground=text_color,command=lambda: services.export())
+root_menu_file.add_command(label=f"Update Database{"\U00002000"*2}(Ctrl+R)",foreground=text_color,command=update_database)
+root_menu_file.add_command(label=f"Exit To Louncher{"\U00002000"*3}(Alt+F5)",foreground=text_color,command=tolouncher)
+
+#keybinds
+root_window.bind_all("<Control-F2>",lambda v: rename_crafting())
+root_window.bind_all("<Control-s>",lambda event:save_data())
+root_window.bind_all("<Control-n>",lambda event:create_crafting())
+root_window.bind_all("<Control-q>",lambda event:services.export(generators))
+root_window.bind_all("<Control-r>",lambda event:update_database())
+root_window.bind_all("<Alt-F5>",lambda event:tolouncher())
+def process_delete(event):
+	if event.state & 0x4:
+		remove_crafting()
+root_window.bind_all("<Delete>", process_delete)
+
 
 def json_auti_correct_toogle():
 	global auto_indent_correct
@@ -2734,10 +2710,7 @@ recipe_name_entry.pack_propagate(0)
 type_labbel = ctk.CTkLabel(recipe_name_frame,text="Type: ")
 type_labbel.pack(fill="x",pady=4,padx=4)
 
-root_window.bind_all("<Control-s>",lambda event:save_data())
-root_window.bind_all("<Control-n>",lambda event:create_crafting())
-root_window.bind_all("<Control-q>",lambda event:services.export(generators))
-root_window.bind_all("<Control-r>",lambda event:update_database())
+
 
 root_menu.add_cascade(label="File",foreground=text_color,menu=root_menu_file)
 #root_menu.add_cascade(label="Quick Tools",foreground=text_color,menu=root_menu_quick_tools)

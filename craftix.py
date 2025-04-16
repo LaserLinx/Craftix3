@@ -57,6 +57,24 @@ def root_stop():
 		exit(0)
 
 
+class TextFixer:
+    @staticmethod
+    def fix(textbox: ctk.CTkTextbox):
+        def paste_cleaned(event=None):
+            try:
+                clipboard = textbox.clipboard_get()
+                cleaned = clipboard.replace('\r', '')
+                textbox.insert(tk.INSERT, cleaned)
+            except tk.TclError:
+                pass
+            return "break"
+
+        # Odchytíme CTRL+V a pravý klik paste (pokud používáš menu, přidej i tam)
+        textbox.bind('<Control-v>', paste_cleaned)
+        textbox.bind('<Control-V>', paste_cleaned)
+        textbox.bind('<Command-v>', paste_cleaned)  # pro MacOS
+
+
 def tolouncher():
 	global running
 	try:
@@ -211,7 +229,7 @@ remove_frame.place(x=10,y=1)
 
 remove_textbox=ctk.CTkTextbox(remove_frame,height=571,width=999)
 remove_textbox.pack(side="bottom",fill="both")
-
+TextFixer.fix(remove_textbox)
 
 caption_labels = []
 class caption(ctk.CTkLabel):

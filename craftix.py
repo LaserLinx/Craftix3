@@ -283,7 +283,7 @@ tags_edit_frame.place(x=10,y=1)
 
 tags_edit_textbox=ctk.CTkTextbox(tags_edit_frame,height=571,width=999)
 tags_edit_textbox.pack(side="bottom",fill="both")
-
+TextFixer.fix(tags_edit_textbox)
 
 def update_custum_parms(commander,data,color="#F8E45C"):
 	try:
@@ -380,7 +380,7 @@ remove_text_box_commander = TextBoxCommander(remove_textbox)
 remove_text_box_commander.add_mark_keywords("#00ffbb",[";"])
 remove_text_box_commander.add_mark_keywords("#60C447",[":","/"])
 remove_text_box_commander.add_mark_keywords("#ff0000",["*",",","=",'"',"'","."])
-
+TextFixer.fix(tags_textbox)
 tags_text_box_commander = TextBoxCommander(tags_textbox)
 tags_text_box_commander.add_mark_keywords("#00ffbb",[";"])
 tags_text_box_commander.add_mark_keywords("#60C447",[":","/"])

@@ -1239,20 +1239,9 @@ def load_crafting(load_item,buttons,recipe_name_entry):
 				item = item_crafting_data["crafting"].get(place)
 				
 				selected_item = item
-				if ":" in selected_item:
-					remove_index = ""
-					
-					for index in selected_item:
-						if not index == ":":
-							remove_index = str(remove_index) + str(index)
-						else:
-							remove_index = str(remove_index) + ":"
-							break
-
-					item = item.replace(remove_index,"")
-					tag = False
-					if str(selected_item).startswith("tag:"):
-						tag = True
+				tag = False
+				if str(selected_item).startswith("tag:"):
+					tag = True
 				if settings.config.get("BorderRender") == True:
 					image = ImageTk.PhotoImage(Image.open(border_render.generate_border(db_engine.search_path(item,tag=tag)),resample=0))
 				else:
@@ -1261,16 +1250,6 @@ def load_crafting(load_item,buttons,recipe_name_entry):
 				buttons[int(place) - 1].image = image
 			item = item_crafting_data.get("result")
 			selected_item = item
-			if ":" in selected_item:
-				remove_index = ""
-				for index in selected_item:
-					if not index == ":":
-						remove_index = str(remove_index) + str(index)
-					else:
-						remove_index = str(remove_index) + ":"
-						break
-
-				item = item.replace(remove_index,"")
 				
 			try:
 				tag = False

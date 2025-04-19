@@ -1119,16 +1119,6 @@ def load_crafting(load_item,buttons,recipe_name_entry):
 				buttons[int(place) - 1].image = image
 			item = item_crafting_data.get("result")
 			selected_item = item
-			if ":" in selected_item:
-				remove_index = ""
-				for index in selected_item:
-					if not index == ":":
-						remove_index = str(remove_index) + str(index)
-					else:
-						remove_index = str(remove_index) + ":"
-						break
-
-				item = item.replace(remove_index,"")
 				
 			try:
 				tag = False

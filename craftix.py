@@ -254,7 +254,7 @@ def check_json_syntax(event=None):
         start_index = f"{line}.0"
         end_index = f"{line}.end"
         tags_edit_textbox.tag_add("json_error", start_index, end_index)
-        tags_edit_textbox.tag_config("json_error", background="red", foreground="white")
+        tags_edit_textbox.tag_config("json_error", background="#880000", foreground="white")
 
 
 tags_frame=ctk.CTkFrame(tab_menu,height=571,width=999)

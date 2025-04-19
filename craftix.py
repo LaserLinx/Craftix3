@@ -58,21 +58,21 @@ def root_stop():
 
 
 class TextFixer:
-    @staticmethod
-    def fix(textbox: ctk.CTkTextbox):
-        def paste_cleaned(event=None):
-            try:
-                clipboard = textbox.clipboard_get()
-                cleaned = clipboard.replace('\r', '')
-                textbox.insert(tk.INSERT, cleaned)
-            except tk.TclError:
-                pass
-            return "break"
+	@staticmethod
+	def fix(textbox: ctk.CTkTextbox):
+		def paste_cleaned(event=None):
+			try:
+				clipboard = textbox.clipboard_get()
+				cleaned = clipboard.replace('\r', '')
+				textbox.insert(tk.INSERT, cleaned)
+			except tk.TclError:
+				pass
+			return "break"
 
-        # Odchytíme CTRL+V a pravý klik paste (pokud používáš menu, přidej i tam)
-        textbox.bind('<Control-v>', paste_cleaned)
-        textbox.bind('<Control-V>', paste_cleaned)
-        textbox.bind('<Command-v>', paste_cleaned)  # pro MacOS
+		# Odchytíme CTRL+V a pravý klik paste (pokud používáš menu, přidej i tam)
+		textbox.bind('<Control-v>', paste_cleaned)
+		textbox.bind('<Control-V>', paste_cleaned)
+		textbox.bind('<Command-v>', paste_cleaned)  # pro MacOS
 
 
 def tolouncher():
@@ -89,15 +89,15 @@ def tolouncher():
 		exit(0)
 
 def auto_close(event):
-    """Automaticky uzavírá závorky a uvozovky v CTkTextbox."""
-    textbox = event.widget
-    text = event.char
-    
-    pairs = {"(": ")", "[": "]", "{": "}", "\"": "\"", "'": "'"}
-    
-    if text in pairs:
-        textbox.insert("insert", pairs[text])
-        textbox.mark_set("insert", "insert-1c")
+	"""Automaticky uzavírá závorky a uvozovky v CTkTextbox."""
+	textbox = event.widget
+	text = event.char
+		
+	pairs = {"(": ")", "[": "]", "{": "}", "\"": "\"", "'": "'"}
+		
+	if text in pairs:
+		textbox.insert("insert", pairs[text])
+		textbox.mark_set("insert", "insert-1c")
 
 auto_indent_correct = False
 auto_indent_correct_m = ""
@@ -243,18 +243,18 @@ def final_remove_ids(value):
 	db_engine.save_removed_crfating_ids(ids=value)
 
 def check_json_syntax(event=None):
-    """Zkontroluje syntaxi JSONu a zvýrazní chybnou řádku červeně."""
-    content = tags_edit_textbox.get("1.0", "end-1c")
-    try:
-        json.loads(content)
-        tags_edit_textbox.tag_remove("json_error", "1.0", "end")
-    except json.JSONDecodeError as e:
-        line, column = e.lineno, e.colno
+	"""Zkontroluje syntaxi JSONu a zvýrazní chybnou řádku červeně."""
+	content = tags_edit_textbox.get("1.0", "end-1c")
+	try:
+		json.loads(content)
+		tags_edit_textbox.tag_remove("json_error", "1.0", "end")
+	except json.JSONDecodeError as e:
+		line, column = e.lineno, e.colno
 
-        start_index = f"{line}.0"
-        end_index = f"{line}.end"
-        tags_edit_textbox.tag_add("json_error", start_index, end_index)
-        tags_edit_textbox.tag_config("json_error", background="#880000", foreground="white")
+		start_index = f"{line}.0"
+		end_index = f"{line}.end"
+		tags_edit_textbox.tag_add("json_error", start_index, end_index)
+		tags_edit_textbox.tag_config("json_error", background="#880000", foreground="white")
 
 
 tags_frame=ctk.CTkFrame(tab_menu,height=571,width=999)
@@ -415,55 +415,55 @@ DataAPI.set_get_global_func(get_widget_by_name)
 I_arrow00=ImageTk.PhotoImage(Image.open("./assets/textures/arrow00.png"))
 I_slot00=ImageTk.PhotoImage(Image.open("./assets/textures/slot00.png").resize((54,54),resample=0))
 def redirect_console_to_logs(text_widget, log_file_path, highlight_green=None, highlight_red=None, highlight_yellow=None):
-    if highlight_green is None:
-        highlight_green = ["[ok]:", "initialized", "success", "running", "accepted", "[Success] all systems go"]
-    if highlight_red is None:
-        highlight_red = ["error", "denied", "[Error]", "[ERROR]"]
-    if highlight_yellow is None:
-        highlight_yellow = ["info", "[info]"]
+	if highlight_green is None:
+		highlight_green = ["[ok]:", "initialized", "success", "running", "accepted", "[Success] all systems go"]
+	if highlight_red is None:
+		highlight_red = ["error", "denied", "[Error]", "[ERROR]"]
+	if highlight_yellow is None:
+		highlight_yellow = ["info", "[info]"]
 
-    # Ověření, že složka logs existuje
-    os.makedirs(os.path.dirname(log_file_path), exist_ok=True)
+	# Ověření, že složka logs existuje
+	os.makedirs(os.path.dirname(log_file_path), exist_ok=True)
 
-    def write_to_textbox(message):
-        
+	def write_to_textbox(message):
+		
 
-        with open(log_file_path, "a", encoding="utf-8") as log_file:
-            timestamp = datetime.datetime.now().strftime("[%Y-%m-%d %H:%M:%S] ")
-            log_file.write(timestamp + message + "\n")
+		with open(log_file_path, "a", encoding="utf-8") as log_file:
+			timestamp = datetime.datetime.now().strftime("[%Y-%m-%d %H:%M:%S] ")
+			log_file.write(timestamp + message + "\n")
 
-    def highlight_word(widget, word, start, end, color):
-        start_pos = widget.search(word, start, stopindex=end, nocase=True)
-        while start_pos:
-            end_pos = f"{start_pos}+{len(word)}c"
-            widget.tag_add(color, start_pos, end_pos)
-            widget.tag_config(color, foreground=color)
-            start_pos = widget.search(word, end_pos, stopindex=end, nocase=True)
+	def highlight_word(widget, word, start, end, color):
+		start_pos = widget.search(word, start, stopindex=end, nocase=True)
+		while start_pos:
+			end_pos = f"{start_pos}+{len(word)}c"
+			widget.tag_add(color, start_pos, end_pos)
+			widget.tag_config(color, foreground=color)
+			start_pos = widget.search(word, end_pos, stopindex=end, nocase=True)
 
-    class ConsoleStream:
-        def write(self, message):
-            if message.strip():
-                text_widget.after(0, write_to_textbox, message)
+	class ConsoleStream:
+		def write(self, message):
+			if message.strip():
+				text_widget.after(0, write_to_textbox, message)
 
-        def flush(self):
-            pass
+		def flush(self):
+			pass
 
-    return ConsoleStream()
+	return ConsoleStream()
 
 def create_debug_window(root=None, text_box_height=240, text_box_width=322, bg_color="black", fg_color="white"):
-    log_file_path = "logs/app.log"
+	log_file_path = "logs/app.log"
 
-    text_box = ctk.CTkTextbox(root, wrap='word', height=text_box_height, width=text_box_width)
-    text_box.pack(fill='both', expand=True)
-    text_box.configure(state='disabled')
+	text_box = ctk.CTkTextbox(root, wrap='word', height=text_box_height, width=text_box_width)
+	text_box.pack(fill='both', expand=True)
+	text_box.configure(state='disabled')
 
-    sys.stdout = redirect_console_to_logs(text_box, log_file_path)
-    sys.stderr = redirect_console_to_logs(text_box, log_file_path)
+	sys.stdout = redirect_console_to_logs(text_box, log_file_path)
+	sys.stderr = redirect_console_to_logs(text_box, log_file_path)
 
-    def generate_debug_output():
-        print("Debug Window initialized!")
+	def generate_debug_output():
+		print("Debug Window initialized!")
 
-    threading.Thread(target=generate_debug_output, daemon=True).start()
+	threading.Thread(target=generate_debug_output, daemon=True).start()
 
 # Použití v aplikaci
 debug_frame = ctk.CTkFrame(root_window)
@@ -976,7 +976,7 @@ def update_workspace(results = []):
 
 		module07_arrow00=tk.Button(root,image=I_arrow00,width=59,borderwidth=0,highlightthickness=0,background=dark_bg_color,activebackground=dark_bg_color)
 		module07_arrow00.place(x=568,y=222)
-		caption(root,text="Template    Source     Upgrade                               Result").place(x=387,y=193)
+		caption(root,text="Template	Source	 Upgrade							   Result").place(x=387,y=193)
 		element_database = [module07_slot00,module07_slot01,module07_slot02,module07_slot03,module07_arrow00]
 	
 	if modules == "Custum Json":

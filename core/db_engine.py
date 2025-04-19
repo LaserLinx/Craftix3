@@ -35,6 +35,13 @@ saved_database_name = os.path.join(projects_path,project_name,"database_saved.ls
 save_path = os.path.join(projects_path,project_name,"save.craftix")
 disemble_craft_save_path = os.path.join(projects_path,project_name,"disemble_craft_ids.craftix")
 tags_path = os.path.join(projects_path,project_name,"tags.craftix")
+tags_backup_path = os.path.join(projects_path,project_name,"tags_backup.craftix")
+
+if not os.path.exists(tags_backup_path):
+	with open(tags_backup_path,"w") as f:
+		f.write(encrypt_json({"tags": []}))
+
+
 
 SERVER_CONNECTION = False
 SERVER_URL = "http://192.168.1.101:5000/api"
@@ -345,6 +352,9 @@ def update_tags(tags,database_path=database_path):
 	database["tags"] = tags
 	with open(os.path.join(database_path,"config.json"),"w") as f:
 		f.write(json.dumps(database))
+	with open(tags_backup_path,"w") as f:
+		f.write(encrypt_json({"tags": tags}))
+
 
 
 
@@ -445,6 +455,14 @@ def save_removed_crfating_ids(path=disemble_craft_save_path,ids=[]):
 			f.write(encrypt_json(data))
 			f.close()
 	
+
+try:
+	with open(tags_backup_path) as f:
+		update_tags(decrypt_json(f.read()).get("tags"))
+except:
+	print("loading tags error")
+
+
 
 def load_settings():
 	with open("settings.json") as f:

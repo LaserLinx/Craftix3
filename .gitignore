@@ -174,4 +174,7 @@ bin
 lib
 lib64
 pyvenv.cfg
-
+share
+etc
+include
+.version_full
